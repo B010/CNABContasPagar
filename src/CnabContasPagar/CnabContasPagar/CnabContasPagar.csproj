@@ -5,4 +5,8 @@
     <Authors>Bruno Rodrigues da Silva</Authors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

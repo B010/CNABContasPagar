@@ -1,2 +1,11 @@
-# CNABContasPagar
- biblioteca para gerar/ler arquivos de pagamento nos padrões CNAB de 240 ou 400 posições
+Cria arquivos nos formatos CNAB
+
+Suporte escrita:
+- Escreve arquivos de remessa Itau 240 posições
+
+
+Suporte leitura:
+- Lê arquivos de retorno Itau 240 posições
+
+
+

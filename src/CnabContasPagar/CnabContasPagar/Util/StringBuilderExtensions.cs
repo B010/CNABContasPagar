@@ -52,7 +52,7 @@ namespace CnabContasPagar.Util
 
         public static StringBuilder AppendData(this StringBuilder sb, DateTime data)
         {
-            return sb.AppendData(data, "ddMMyy");
+            return sb.AppendData(data, "ddMMyyyy");
         }
 
         public static StringBuilder AppendData(this StringBuilder sb, DateTime? data)
