@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CnabContasPagar.Models
 {
-    class Liquidacao
+    public class Liquidacao
     {
         public string FormaPagamento { get; set; }
         public string BancoFavorecido { get; set; }
@@ -13,5 +13,8 @@ namespace CnabContasPagar.Models
         public string DacFavorecido { get; set; }
         public string NomeFavorecido { get; set; }
         public string NossoNumero { get; set; }
+        public DateTime DataPagamento { get; set; }
+        public decimal ValorPagamento { get; set; }
+        public string CpfCnpjFavorecido { get; set; }
     }
 }

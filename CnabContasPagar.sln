@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CnabContasPagar", "src\CnabContasPagar\CnabContasPagar\CnabContasPagar.csproj", "{8E25043A-83B8-4923-92C1-63662B71C74E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CNABContasPagar", "src\CnabContasPagar\CnabContasPagar\CNABContasPagar.csproj", "{8E25043A-83B8-4923-92C1-63662B71C74E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{B20F08C6-AFA5-4EDF-821D-41FBB9F388EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CNABContasPagar.Testes", "testes\CNABContasReceber.Testes\CNABContasPagar.Testes.csproj", "{5AE9D4A2-D6D7-41C3-926D-A93088A057FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{8E25043A-83B8-4923-92C1-63662B71C74E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E25043A-83B8-4923-92C1-63662B71C74E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E25043A-83B8-4923-92C1-63662B71C74E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AE9D4A2-D6D7-41C3-926D-A93088A057FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AE9D4A2-D6D7-41C3-926D-A93088A057FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AE9D4A2-D6D7-41C3-926D-A93088A057FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AE9D4A2-D6D7-41C3-926D-A93088A057FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5AE9D4A2-D6D7-41C3-926D-A93088A057FA} = {B20F08C6-AFA5-4EDF-821D-41FBB9F388EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {44A1DB23-43BC-4B29-B306-ABFF5DB445F1}

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CnabContasPagar.Bancos
 {
-    class BancoItau240
+    public class BancoItau240
     {
         private int codigoLote = 1;
         private int codigoDetalhe = 1;
@@ -18,23 +18,26 @@ namespace CnabContasPagar.Bancos
 
         public Opcoes Opcoes { get; set; }
 
-        public string MontarArquivo()
+        public string MontarArquivo(List<Liquidacao> liquidacoes)
         {
-            codigoLote = 1;
-            codigoDetalhe = 1;
+            codigoLote = 0;
+            codigoDetalhe = 0;
 
             var b = new StringBuilder();
 
-            Header(b);
+            HeaderArquivo(b);
 
-            DetalhePagamentoComum(b);
-                        
-            
+            foreach(var liq in liquidacoes)
+            {
+                DetalhePagamentoComum(b, liq);
+            }     
+
+            TrailerArquivo(b);
 
             return b.ToString();
         }
 
-        public void Header(StringBuilder b)
+        public void HeaderArquivo(StringBuilder b)
         {
             b.Append("34100000"); //01-08
             b.Append(new string(' ', 6)); //09-14
@@ -59,10 +62,16 @@ namespace CnabContasPagar.Bancos
             b.Append(Environment.NewLine);
         }
 
+        public void DetalhePagamentoComum(StringBuilder b, Liquidacao liquidacao)
+        {
+            HeaderDetalheComum(b, liquidacao);
+            DetalheA(b, liquidacao);
+            TrailerDetalheComum(b, liquidacao);
+        }
         public void HeaderDetalheComum(StringBuilder b, Liquidacao liquidacao)
         {
             b.Append("341"); //01-03
-            b.AppendNumero(4, codigoLote); //04-07
+            b.AppendNumero(4, ++codigoLote); //04-07
             b.Append('1'); //08-08
             b.Append('C'); //09-09 (C=Credito)
             b.Append("01"); //10-11 TIPO DE PAGTO
@@ -97,17 +106,57 @@ namespace CnabContasPagar.Bancos
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
             b.Append('3');
-            b.AppendNumero(5, codigoDetalhe);
+            b.AppendNumero(5, ++codigoDetalhe);
             b.Append('A');
             b.Append("000"); //TIPO DE MOVIMENTO
             b.Append("888");
             b.AppendNumero(3, liquidacao.BancoFavorecido);
-            b.Append(FazerAgenciaContaFavorecido(liquidacao));
+            b.AppendTexto(20, FazerAgenciaContaFavorecido(liquidacao));
             b.AppendTexto(30, liquidacao.NomeFavorecido);
             b.AppendTexto(20, liquidacao.NossoNumero);
+            b.AppendData(liquidacao.DataPagamento);
             b.Append("REA");
+            b.Append(new string('0', 8)); //IDENTIFICAÇÃO DA INSTITUIÇÃO PARA O SPB
+            b.AppendNumero(7, 0);
+            b.AppendDinheiro(15, liquidacao.ValorPagamento);
+            b.AppendTexto(20, " ");
+            b.AppendNumero(8, 0);
+            b.AppendNumero(15, 0);
+            b.Append(new string(' ', 18));
+            b.Append(new string(' ', 2));
+            b.Append(new string('0', 6));
+            b.AppendNumero(14, liquidacao.CpfCnpjFavorecido);
+            b.Append(new string(' ', 2));
+            b.Append(new string(' ', 5));
+            b.Append(new string(' ', 5));
+            b.Append('0');
+            b.Append(new string (' ', 10));
+            b.Append(Environment.NewLine);
+        }
 
+        public void TrailerDetalheComum(StringBuilder b, Liquidacao liquidacao)
+        {
+            b.Append("341");
+            b.Append(codigoLote);
+            b.Append('5');
+            b.Append(new string(' ', 9));
+            b.AppendNumero(6,codigoDetalhe);
+            b.AppendDinheiro(16, liquidacao.ValorPagamento);
+            b.Append(new string('0', 18));
+            b.Append(new string(' ', 171));
+            b.Append(new string(' ', 10));
+            b.Append(Environment.NewLine);
+        }
 
+        public void TrailerArquivo(StringBuilder b)
+        {
+            b.Append("341");
+            b.Append("9999");
+            b.Append('9');
+            b.Append(new string(' ', 9));
+            b.AppendNumero(6,codigoLote);
+            b.AppendNumero(6,codigoDetalhe);
+            b.Append(new string(' ', 211));
             b.Append(Environment.NewLine);
         }
 

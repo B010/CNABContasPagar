@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Bruno Rodrigues da Silva</Authors>
+    <PackageId>CNABContasPagar</PackageId>
+    <Product>CNABContasPagar</Product>
+    <AssemblyName>CNABContasPagar</AssemblyName>
+    <RootNamespace>CNABContasPagar</RootNamespace>
   </PropertyGroup>
 
 </Project>
