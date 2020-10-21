@@ -6,6 +6,7 @@ namespace CnabContasPagar.Models
 {
     public class Liquidacao
     {
+        public string TipoPagamento { get; set; }
         public string FormaPagamento { get; set; }
         public string BancoFavorecido { get; set; }
         public string AgenciaFavorecido { get; set; }

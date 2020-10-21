@@ -57,7 +57,7 @@ namespace CnabContasPagar.Bancos
             b.AppendData(DateTime.Now); //144-151
             b.AppendData(DateTime.Now, "hhmmss"); //152-157
             b.AppendNumero(9, 0); //158-166
-            b.AppendNumero(5, 0); //167-171 VERIFICAR DENSIDADE
+            b.AppendNumero(5, 0); //167-171 Unidade de DENSIDADE
             b.Append(new string(' ', 69)); //172-240
             b.Append(Environment.NewLine);
         }
@@ -74,7 +74,7 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(4, ++codigoLote); //04-07
             b.Append('1'); //08-08
             b.Append('C'); //09-09 (C=Credito)
-            b.Append("01"); //10-11 TIPO DE PAGTO
+            b.AppendNumero(2, liquidacao.TipoPagamento); //10-11 TIPO DE PAGTO
             b.AppendNumero(2,liquidacao.FormaPagamento); //12-13 FORMA DE PAGAMENTO
             b.Append("040"); //14-16
             b.Append(' '); //17-17
@@ -88,8 +88,8 @@ namespace CnabContasPagar.Bancos
             b.Append(' '); //71-71
             b.Append(Opcoes.DAC); //72-72
             b.AppendTexto(30, Opcoes.RazaoSocial); //73-102
-            b.Append(new string (' ', 30)); //103-132 FINALIDADE DO LOTE 
-            b.Append(new string(' ', 10)); //133-142 HISTÓRICO DE C/C
+            b.Append(new string (' ', 30)); //103-132 FINALIDADE DO LOTE Ainda não informado
+            b.Append(new string(' ', 10)); //133-142 HISTÓRICO DE C/C Ainda não informado
             b.AppendTexto(30, Opcoes.EnderecoPagador); //143-172
             b.AppendNumero(5, Opcoes.Numero); //173-177
             b.Append(new string(' ', 15));  //178-192
@@ -108,7 +108,7 @@ namespace CnabContasPagar.Bancos
             b.Append('3');
             b.AppendNumero(5, ++codigoDetalhe);
             b.Append('A');
-            b.Append("000"); //TIPO DE MOVIMENTO
+            b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
             b.Append("888");
             b.AppendNumero(3, liquidacao.BancoFavorecido);
             b.AppendTexto(20, FazerAgenciaContaFavorecido(liquidacao));
@@ -137,11 +137,11 @@ namespace CnabContasPagar.Bancos
         public void TrailerDetalheComum(StringBuilder b, Liquidacao liquidacao)
         {
             b.Append("341");
-            b.Append(codigoLote);
+            b.AppendNumero(4, codigoLote);
             b.Append('5');
             b.Append(new string(' ', 9));
             b.AppendNumero(6,codigoDetalhe);
-            b.AppendDinheiro(16, liquidacao.ValorPagamento);
+            b.AppendDinheiro(18, liquidacao.ValorPagamento);
             b.Append(new string('0', 18));
             b.Append(new string(' ', 171));
             b.Append(new string(' ', 10));

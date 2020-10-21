@@ -30,6 +30,26 @@ namespace CNABContasPagar.Testes.Itau
             Assert.Equal(240, _linha4.Length - 2);
         }
 
+        [Fact]
+        public void Escreveu_Valor_Correto()
+        {
+            var linha = GerarLinhaDetalhe(Liquidacao1());
+            var valor = linha.Slice(120, 134);
+
+            Assert.Equal("000000000012000", valor);
+
+        }
+
+        [Fact]
+        public void Escreveu_Data_Correta()
+        {
+            var linha = GerarLinhaDetalhe(Liquidacao1());
+            var valor = linha.Slice(94, 101);
+
+            Assert.Equal("10102020", valor);
+
+        }
+
         public static string GerarLinhaDetalhe(Liquidacao liquidacao)
         {
             var cnab = new BancoItau240(Opcoes());
@@ -62,16 +82,16 @@ namespace CNABContasPagar.Testes.Itau
         {
             return new Liquidacao()
             {
-               AgenciaFavorecido = "1233",
-               ContaFavorecido = "1233",
-               BancoFavorecido = "341",
-               CpfCnpjFavorecido = "32.140.856/0001-59",
-               DacFavorecido = "3",
-               DataPagamento = new DateTime(2020, 10, 10),
-               NomeFavorecido = "LOJAS RENNER LTDA",
-               NossoNumero = "234645",
-               FormaPagamento = "02",
-               ValorPagamento = 10m
+                AgenciaFavorecido = "1233",
+                ContaFavorecido = "1233",
+                BancoFavorecido = "341",
+                CpfCnpjFavorecido = "32.140.856/0001-59",
+                DacFavorecido = "3",
+                DataPagamento = new DateTime(2020, 10, 10),
+                NomeFavorecido = "LOJAS RENNER LTDA",
+                NossoNumero = "234645",
+                FormaPagamento = "02",
+                ValorPagamento = 120m
             };
         }
 
