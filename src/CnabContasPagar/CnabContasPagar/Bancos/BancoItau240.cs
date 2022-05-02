@@ -216,7 +216,7 @@ namespace CnabContasPagar.Bancos
         {
             var x = "";
 
-            if (formaPagto == "01" && (numeroBanco != "341" || numeroBanco != "409"))
+            if (formaPagto == "01" && (numeroBanco != "341" && numeroBanco != "409"))
             {
                 x = "Para pagar com Crédito em Conta é necessário que os fornecedores tenham conta no banco Itaú!";
             }
