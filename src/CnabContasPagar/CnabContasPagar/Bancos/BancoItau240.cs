@@ -1,12 +1,13 @@
 ﻿using CnabContasPagar.Models;
 using CnabContasPagar.Util;
+using CNABContasPagar.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CnabContasPagar.Bancos
 {
-    public class BancoItau240
+    public class BancoItau240 : IBanco
     {
         private int codigoLote = 1;
         private int codigoDetalhe = 1;
@@ -74,24 +75,24 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(4, ++codigoLote); //04-07
             b.Append('1'); //08-08
             b.Append('C'); //09-09 (C=Credito)
-            b.AppendNumero(2, liquidacao.TipoPagamento); //10-11 TIPO DE PAGTO
+            b.AppendNumero(2, 20); //10-11 TIPO DE PAGTO
             b.AppendNumero(2,liquidacao.FormaPagamento); //12-13 FORMA DE PAGAMENTO
             b.Append("040"); //14-16
             b.Append(' '); //17-17
             b.Append('2'); //18-18
             b.AppendNumero(14, Opcoes.CnpjPagador); //19-32
             b.Append("1707"); //33-36
-            b.Append(new string(' ', 16)); //36-52
+            b.Append(new string(' ', 16)); //37-52
             b.AppendNumero(5, Opcoes.NumeroAgencia); //53-57
             b.Append(' '); //58-58
             b.AppendNumero(12, Opcoes.NumeroContaCorrente); //59-70
             b.Append(' '); //71-71
             b.Append(Opcoes.DAC); //72-72
             b.AppendTexto(30, Opcoes.RazaoSocial); //73-102
-            b.Append(new string (' ', 30)); //103-132 FINALIDADE DO LOTE Ainda não informado
-            b.Append(new string(' ', 10)); //133-142 HISTÓRICO DE C/C Ainda não informado
+            b.Append(new string (' ', 30)); //103-132 FINALIDADE DO LOTE Ainda não informado -- Branco
+            b.Append(new string(' ', 10)); //133-142 HISTÓRICO DE C/C Ainda não informado -- Branco
             b.AppendTexto(30, Opcoes.EnderecoPagador); //143-172
-            b.AppendNumero(5, Opcoes.Numero); //173-177
+            b.AppendNumero(5, 0); //173-177 NUMERO
             b.Append(new string(' ', 15));  //178-192
             b.AppendTexto(20, Opcoes.Cidade); //193-212
             b.AppendNumero(8, Opcoes.Cep); //213-220
@@ -109,17 +110,17 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(5, ++codigoDetalhe);
             b.Append('A');
             b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
-            b.Append("888");
+            b.Append("000"); // CÓDIGO DA CÂMARA CENTRALIZADORA = "888" (Somente para forma de pagamento TED para Corretora)
             b.AppendNumero(3, liquidacao.BancoFavorecido);
             b.AppendTexto(20, FazerAgenciaContaFavorecido(liquidacao));
             b.AppendTexto(30, liquidacao.NomeFavorecido);
-            b.AppendTexto(20, liquidacao.NossoNumero);
+            b.AppendTexto(20, liquidacao.Documento); // Seu Numero
             b.AppendData(liquidacao.DataPagamento);
             b.Append("REA");
-            b.Append(new string('0', 8)); //IDENTIFICAÇÃO DA INSTITUIÇÃO PARA O SPB
+            b.Append(new string('0', 8)); //IDENTIFICAÇÃO DA INSTITUIÇÃO PARA O SPB = "60701190" (Somente para forma de pagamento TED para Corretora)
             b.AppendNumero(7, 0);
             b.AppendDinheiro(15, liquidacao.ValorPagamento);
-            b.AppendTexto(20, " ");
+            b.AppendTexto(20, " "); // Nosso Numero
             b.AppendNumero(8, 0);
             b.AppendNumero(15, 0);
             b.Append(new string(' ', 18));
@@ -127,7 +128,7 @@ namespace CnabContasPagar.Bancos
             b.Append(new string('0', 6));
             b.AppendNumero(14, liquidacao.CpfCnpjFavorecido);
             b.Append(new string(' ', 2));
-            b.Append(new string(' ', 5));
+            b.AppendTexto(5, "00010"); // 00010 - Finalidade da TED (Crédito em Conta)
             b.Append(new string(' ', 5));
             b.Append('0');
             b.Append(new string (' ', 10));
@@ -173,6 +174,12 @@ namespace CnabContasPagar.Bancos
 
                 if(liquidacao.FormaPagamento == "02" || liquidacao.FormaPagamento == "10")
                 {
+                    texto.Append(new string('0', 6));
+                    texto.Append(' ');
+                    texto.Append('0');
+                }
+                else
+                {
                     texto.AppendNumero(6, liquidacao.ContaFavorecido);
                     texto.Append(' ');
                     if (liquidacao.DacFavorecido.Length > 1)
@@ -184,12 +191,6 @@ namespace CnabContasPagar.Bancos
                         texto.Append(' ');
                         texto.Append(liquidacao.DacFavorecido);
                     }
-                }
-                else
-                {
-                    texto.Append(new string('0', 6));
-                    texto.Append(' ');
-                    texto.Append('0');
                 }
             }
             else
@@ -209,6 +210,18 @@ namespace CnabContasPagar.Bancos
                 
             }
             return (texto.ToString());
+        }
+
+        public string ValidaPagto(string formaPagto, string numeroBanco)
+        {
+            var x = "";
+
+            if (formaPagto == "01" && (numeroBanco != "341" || numeroBanco != "409"))
+            {
+                x = "Para pagar com Crédito em Conta é necessário que os fornecedores tenham conta no banco Itaú!";
+            }
+
+            return x;
         }
     }
 }

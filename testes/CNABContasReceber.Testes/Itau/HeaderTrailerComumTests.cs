@@ -43,6 +43,7 @@ namespace CNABContasPagar.Testes.Itau
 
             return sb.ToString();
         }
+
         public static string GerarLinhaTrailer(Liquidacao liquidacao)
         {
             var cnab = new BancoItau240(Opcoes());
@@ -60,11 +61,11 @@ namespace CNABContasPagar.Testes.Itau
                 NumeroContaCorrente = "1558",
                 RazaoSocial = "EMPRESA TAL LTDA",
                 Bairro = "1",
-                Cep = "123",
+                Cep = "12300000",
                 Cidade = "Cidade",
-                DAC = '2',
+                DAC = "2",
                 NomeBanco = "ITAU",
-                Numero = "1",
+                Numero = "00000",
                 UF = "SP",
                 EnderecoPagador = "LOGO ALI",
                 CnpjPagador = "1231313"
@@ -78,7 +79,7 @@ namespace CNABContasPagar.Testes.Itau
                 AgenciaFavorecido = "1233",
                 ContaFavorecido = "1233",
                 BancoFavorecido = "341",
-                CpfCnpjFavorecido = "32.140.856/0001-59",
+                CpfCnpjFavorecido = "32140856000159",
                 DacFavorecido = "3",
                 DataPagamento = new DateTime(2020, 10, 10),
                 NomeFavorecido = "LOJAS RENNER LTDA",
@@ -95,7 +96,7 @@ namespace CNABContasPagar.Testes.Itau
                 AgenciaFavorecido = "1233",
                 ContaFavorecido = "2332",
                 BancoFavorecido = "341",
-                CpfCnpjFavorecido = "32.140.856/0001-59",
+                CpfCnpjFavorecido = "32140856000159",
                 DacFavorecido = "1",
                 DataPagamento = new DateTime(2020, 11, 10),
                 NomeFavorecido = "LOJAS 2 LTDA",
