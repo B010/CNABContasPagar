@@ -239,10 +239,10 @@ namespace CnabContasPagar.Bancos
             b.Append('0');
             b.AppendNumero(14, Opcoes.CnpjPagador);
             b.AppendTexto(40, Opcoes.RazaoSocial);
-            b.AppendTexto(2, liquidacao.InscricaoEmpresa); // Beneficiário
+            b.AppendTexto(1, liquidacao.InscricaoEmpresa); // Beneficiário
             b.AppendTexto(15, CnpjOuCpf(liquidacao));
             b.AppendTexto(40, liquidacao.NomeFavorecido);
-            b.AppendTexto(2, liquidacao.InscricaoEmpresa); // Sacador Avalista
+            b.AppendTexto(1, liquidacao.InscricaoEmpresa); // Sacador Avalista
             b.AppendTexto(15, CnpjOuCpf(liquidacao));
             b.AppendTexto(40, liquidacao.NomeFavorecido);
             b.Append(new string(' ', 53));
@@ -377,141 +377,47 @@ namespace CnabContasPagar.Bancos
 
             return x;
         }
-        
+
         private bool ValidaDvGeral(string codBarras)
         {
+            string parteUm = codBarras.Substring(0, 4);
+            int dv = Convert.ToInt32(codBarras.Substring(4, 1));
+            string parteDois = codBarras.Substring(5, 39);
+
+            string codigo = parteUm + parteDois;
+
             bool retorno;
-            int soma = 0, resto = 0, calculoDV = 0;
+            int mult = 0, total = 0, posicao = 1, limite = 9, digito = 0, resto = 0;
+            string num = string.Empty;
 
-            char[] strs = new char[codBarras.Length];
+            mult += 1 + (codigo.Length % (limite - 1));
 
-            for (int i = codBarras.Length - 1; i >= 0; i--)
+            if (mult == 1)
+                mult = limite;
+
+            while (posicao <= codigo.Length)
             {
-                strs[i] = codBarras[i];
+                num = Mid(codigo, posicao, 1);
+                total += Convert.ToInt32(num) * mult;
+
+                mult -= 1;
+                if (mult == 1)
+                    mult = limite;
+
+                posicao += 1;
             }
 
-            int[] cod = Array.ConvertAll(strs, c => (int)Char.GetNumericValue(c));
+            resto += (total % 11);
 
-            if (codBarras.Length == 44)
-            {
-                soma += cod[43] * 2;
-                soma += cod[42] * 3;
-                soma += cod[41] * 4;
-                soma += cod[40] * 5;
-                soma += cod[39] * 6;
-                soma += cod[38] * 7;
-                soma += cod[37] * 8;
-                soma += cod[36] * 9;
-
-                soma += cod[35] * 2;
-                soma += cod[34] * 3;
-                soma += cod[33] * 4;
-                soma += cod[32] * 5;
-                soma += cod[31] * 6;
-                soma += cod[30] * 7;
-                soma += cod[29] * 8;
-                soma += cod[28] * 9;
-
-                soma += cod[27] * 2;
-                soma += cod[26] * 3;
-                soma += cod[25] * 4;
-                soma += cod[24] * 5;
-                soma += cod[23] * 6;
-                soma += cod[22] * 7;
-                soma += cod[21] * 8;
-                soma += cod[20] * 9;
-
-                soma += cod[19] * 2;
-                soma += cod[18] * 3;
-                soma += cod[17] * 4;
-                soma += cod[16] * 5;
-                soma += cod[15] * 6;
-                soma += cod[14] * 7;
-                soma += cod[13] * 8;
-                soma += cod[12] * 9;
-
-                soma += cod[11] * 2;
-                soma += cod[10] * 3;
-                soma += cod[9] * 4;
-                soma += cod[8] * 5;
-                soma += cod[7] * 6;
-                soma += cod[6] * 7;
-                soma += cod[5] * 8;
-                soma += cod[3] * 9;
-
-                soma += cod[2] * 2;
-                soma += cod[1] * 3;
-                soma += cod[0] * 4;
-                
-                resto += soma % 11;
-                
-                calculoDV += 11 - resto;
-
-                if (cod[4] == calculoDV)
-                    retorno = true;
-                else
-                    retorno = false;
-            }
+            if (resto == 0 || resto == 1 || resto == 10 || resto == 11)
+                digito += 1;
             else
-            {
-                soma += cod[46] * 2;
-                soma += cod[45] * 3;
-                soma += cod[44] * 4;
-                soma += cod[43] * 5;
-                soma += cod[42] * 6;
-                soma += cod[41] * 7;
-                soma += cod[40] * 8;
-                soma += cod[39] * 9;
+                digito += (11 - resto);
 
-                soma += cod[38] * 2;
-                soma += cod[37] * 3;
-                soma += cod[36] * 4;
-                soma += cod[35] * 5;
-                soma += cod[34] * 6;
-                soma += cod[33] * 7;
-                soma += cod[30] * 8;
-                soma += cod[29] * 9;
-
-                soma += cod[28] * 2;
-                soma += cod[27] * 3;
-                soma += cod[26] * 4;
-                soma += cod[25] * 5;
-                soma += cod[24] * 6;
-                soma += cod[23] * 7;
-                soma += cod[22] * 8;
-                soma += cod[21] * 9;
-
-                soma += cod[19] * 2;
-                soma += cod[18] * 3;
-                soma += cod[17] * 4;
-                soma += cod[16] * 5;
-                soma += cod[15] * 6;
-                soma += cod[14] * 7;
-                soma += cod[13] * 8;
-                soma += cod[12] * 9;
-
-                soma += cod[11] * 2;
-                soma += cod[10] * 3;
-                soma += cod[8] * 4;
-                soma += cod[7] * 5;
-                soma += cod[6] * 6;
-                soma += cod[5] * 7;
-                soma += cod[4] * 8;
-                soma += cod[3] * 9;
-
-                soma += cod[2] * 2;
-                soma += cod[1] * 3;
-                soma += cod[0] * 4;
-
-                resto += soma % 11;
-
-                calculoDV += 11 - resto;
-
-                if (cod[32] == calculoDV)
-                    retorno = true;
-                else
-                    retorno = false;
-            }
+            if (dv == digito)
+                retorno = true;
+            else
+                retorno = false;
 
             return retorno;
         }
@@ -520,56 +426,64 @@ namespace CnabContasPagar.Bancos
         {
             bool retorno;
 
-            char[] strs = new char[codBarras.Length];
+            string campoUm = codBarras.Substring(0, 9);
+            int dvUm = Convert.ToInt32(codBarras.Substring(9, 1));
+            string campoDois = codBarras.Substring(10, 10);
+            int dvDois = Convert.ToInt32(codBarras.Substring(20, 1));
+            string campoTres = codBarras.Substring(21, 10);
+            int dvTres = Convert.ToInt32(codBarras.Substring(31, 1));
 
-            for (int i = codBarras.Length - 1; i >= 0; i--)
+            int somaUm = 0, somaDois = 0, somaTres = 0, pesoTres = 2, restoUm, restoDois, restoTres;
+
+            for (int i = campoTres.Length; i > 0; i--)
             {
-                strs[i] = codBarras[i];
+                restoTres = (Convert.ToInt32(Mid(campoTres, i, 1)) * pesoTres);
+
+                if (restoTres > 9)
+                    restoTres = (restoTres / 10) + (restoTres % 10);
+
+                somaTres += restoTres;
+
+                if (pesoTres == 2)
+                    pesoTres = 1;
+                else
+                    pesoTres = pesoTres + 1;
             }
+            int dvCampo3 = ((10 - (somaTres % 10)) % 10);
+            int pesoDois = pesoTres == 2 ? 1 : 2;
 
-            int[] cod = Array.ConvertAll(strs, c => (int)Char.GetNumericValue(c));
+            for (int i = campoDois.Length; i > 0; i--)
+            {
+                restoDois = (Convert.ToInt32(Mid(campoDois, i, 1)) * pesoDois);
 
-            int somaCampo1 = 0, somaCampo2 = 0, somaCampo3 = 0, restoCampo1 = 0, restoCampo2 = 0, restoCampo3 = 0, dvCampo1 = 0, dvCampo2 = 0, dvCampo3 = 0;
+                if (restoDois > 9)
+                    restoDois = (restoDois / 10) + (restoDois % 10);
 
-            somaCampo3 += cod[30] * 2;
-            somaCampo3 += cod[29] * 1;
-            somaCampo3 += cod[28] * 2;
-            somaCampo3 += cod[27] * 1;
-            somaCampo3 += cod[26] * 2;
-            somaCampo3 += cod[25] * 1;
-            somaCampo3 += cod[24] * 2;
-            somaCampo3 += cod[23] * 1;
-            somaCampo3 += cod[22] * 2;
-            somaCampo3 += cod[21] * 1;
+                somaDois += restoDois;
 
-            somaCampo2 += cod[19] * 2;
-            somaCampo2 += cod[18] * 1;
-            somaCampo2 += cod[17] * 2;
-            somaCampo2 += cod[16] * 1;
-            somaCampo2 += cod[15] * 2;
-            somaCampo2 += cod[14] * 1;
-            somaCampo2 += cod[13] * 2;
-            somaCampo2 += cod[12] * 1;
-            somaCampo2 += cod[11] * 2;
-            somaCampo2 += cod[10] * 1;
+                if (pesoDois == 2)
+                    pesoDois = 1;
+                else
+                    pesoDois = pesoDois + 1;
+            }
+            int dvCampo2 = ((10 - (somaDois % 10)) % 10);
+            int pesoUm = pesoDois == 2 ? 1 : 2;
 
-            somaCampo1 += cod[8] * 2;
-            somaCampo1 += cod[7] * 1;
-            somaCampo1 += cod[6] * 2;
-            somaCampo1 += cod[5] * 1;
-            somaCampo1 += cod[4] * 2;
-            somaCampo1 += cod[3] * 1;
-            somaCampo1 += cod[2] * 2;
-            somaCampo1 += cod[1] * 1;
-            somaCampo1 += cod[0] * 2;
+            for (int i = campoUm.Length; i > 0; i--)
+            {
+                restoUm = (Convert.ToInt32(Mid(campoUm, i, 1)) * pesoUm);
 
-            restoCampo3 += somaCampo3 % 10;
-            restoCampo2 += somaCampo2 % 10;
-            restoCampo1 += somaCampo1 % 10;
+                if (restoUm > 9)
+                    restoUm = (restoUm / 10) + (restoUm % 10);
 
-            dvCampo3 += 10 - restoCampo3;
-            dvCampo2 += 10 - restoCampo2;
-            dvCampo1 += 10 - restoCampo1;
+                somaUm += restoUm;
+
+                if (pesoUm == 2)
+                    pesoUm = 1;
+                else
+                    pesoUm = pesoUm + 1;
+            }
+            int dvCampo1 = ((10 - (somaUm % 10)) % 10);
 
             if (dvCampo3 == 10)
                 dvCampo3 = 0;
@@ -578,7 +492,7 @@ namespace CnabContasPagar.Bancos
             if (dvCampo1 == 10)
                 dvCampo1 = 0;
 
-            if (cod[31] == dvCampo3 && cod[20] == dvCampo2 && cod[9] == dvCampo1)
+            if (dvTres == dvCampo3 && dvDois == dvCampo2 && dvUm == dvCampo1)
                 retorno = true;
             else
                 retorno = false;
@@ -586,36 +500,65 @@ namespace CnabContasPagar.Bancos
             return retorno;
         }
 
-        public string ValidaCodBarras(string codBarras)
+        public static string Mid(string str, int start, int? length = null)
         {
-            string x;
+            if (!length.HasValue)
+                return str.Substring(start - 1);
+            else
+                return str.Substring(start - 1, length.Value);
+        }
+
+        public bool ValidaCodBarras(string formaPagto, string codBarras)
+        {
             bool valido;
 
-            if (codBarras.Length == 44)
-                valido = ValidaDvGeral(codBarras);
-            if (codBarras.Length == 47)
+            if (formaPagto == "30" || formaPagto == "31")
             {
-                bool dvGeral, dvUnitario;
+                if (codBarras.Length == 44)
+                    valido = ValidaDvGeral(codBarras);
+                else if (codBarras.Length == 47)
+                {
+                    bool dvGeral, dvUnitario;
 
-                dvGeral = ValidaDvGeral(codBarras);
-                dvUnitario = ValidaDvUnitario(codBarras);
+                    dvUnitario = ValidaDvUnitario(codBarras);
+                    string codBarrasTxt = RetornaCodigoFormatado(codBarras);
+                    dvGeral = ValidaDvGeral(codBarrasTxt);
 
-                if (dvGeral == true && dvUnitario == true)
-                    valido = true;
+                    if (dvUnitario == true && dvGeral == true)
+                        valido = true;
+                    else
+                        valido = false;
+                }
                 else
+                {
                     valido = false;
+                }
             }
             else
             {
-                valido = false;
-            }    
+                valido = true;
+            }
 
-            if (valido)
-                x = "";
-            else
-                x = "false";
+            return valido;
+        }
 
-            return x;
+        private string RetornaCodigoFormatado(string codBarras)
+        {
+            string codBanco = codBarras.Substring(0, 3);
+            string codMoeda = codBarras.Substring(3, 1);
+
+            string campo1 = codBarras.Substring(4, 5);
+            string campo2 = codBarras.Substring(10, 10);
+            string campo3 = codBarras.Substring(21, 10);
+            string campoLivre = campo1 + campo2 + campo3;
+
+            string dv = codBarras.Substring(32, 1);
+            string fatVencto = codBarras.Substring(33, 4);
+            string valor = codBarras.Substring(37, 10);
+
+            string texto = codBanco + codMoeda + dv + fatVencto + valor + campoLivre;
+
+            return texto;
         }
 
         private string FormataCodigoBarras(Liquidacao liquidacao)
@@ -635,14 +578,12 @@ namespace CnabContasPagar.Bancos
             }
             else
             {
-                string campo1, campo2, campo3;
-
                 codBanco = liquidacao.CodigoBarras.Substring(0, 3);
                 codMoeda = liquidacao.CodigoBarras.Substring(3, 1);
 
-                campo1 = liquidacao.CodigoBarras.Substring(4, 5);
-                campo2 = liquidacao.CodigoBarras.Substring(10, 10);
-                campo3 = liquidacao.CodigoBarras.Substring(21, 10);
+                string campo1 = liquidacao.CodigoBarras.Substring(4, 5);
+                string campo2 = liquidacao.CodigoBarras.Substring(10, 10);
+                string campo3 = liquidacao.CodigoBarras.Substring(21, 10);
                 campoLivre = campo1 + campo2 + campo3;
 
                 dv = liquidacao.CodigoBarras.Substring(32, 1);

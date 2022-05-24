@@ -16,7 +16,7 @@ namespace CNABContasPagar.Interfaces
         void TrailerArquivo(StringBuilder b);
         string ValidaPagto(string formaPagto, string numeroBanco);
         string ExisteCodBarras(string formaPagto, string codBarras);
-        string ValidaCodBarras(string codBarras);
+        bool ValidaCodBarras(string formaPagto, string codBarras);
         Opcoes Opcoes { get; set; }
     }
 }
