@@ -122,14 +122,32 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(5, ++codigoDetalhe);
             b.Append('A');
             b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
-            b.AppendNumero(3, 0); // CÓDIGO DA CÂMARA CENTRALIZADORA = "888" (Somente para forma de pagamento TED para Corretora)
+
+            if (liquidacao.FormaPagamento == "41B")
+            {
+                b.AppendNumero(3, 8); // CÓDIGO DA CÂMARA CENTRALIZADORA = "888" (Somente para forma de pagamento TED para Corretora)
+            }
+            else
+            {
+                b.AppendNumero(3, 0);
+            }
+
             b.AppendNumero(3, liquidacao.BancoFavorecido);
             b.AppendTexto(20, FazerAgenciaContaFavorecido(liquidacao));
             b.AppendTexto(30, liquidacao.NomeFavorecido);
             b.AppendTexto(20, liquidacao.Documento); // Seu Numero
             b.AppendData(liquidacao.DataPagamento);
             b.Append("REA");
-            b.AppendNumero(8, 0); //IDENTIFICAÇÃO DA INSTITUIÇÃO PARA O SPB = "60701190" (Somente para forma de pagamento TED para Corretora)
+
+            if (liquidacao.FormaPagamento == "41B")
+            {
+                b.AppendNumero(8, 60701190); //IDENTIFICAÇÃO DA INSTITUIÇÃO PARA O SPB = "60701190" (Somente para forma de pagamento TED para Corretora)
+            }
+            else
+            {
+                b.AppendNumero(8, 0);
+            }
+
             b.AppendNumero(7, 0);
             b.AppendDinheiro(15, liquidacao.ValorPagamento);
             b.AppendTexto(20, " "); // Nosso Numero
@@ -326,13 +344,17 @@ namespace CnabContasPagar.Bancos
             return (texto.ToString());
         }
 
-        public string ValidaPagto(string formaPagto, string numeroBanco)
+        public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora)
         {
             var x = "";
 
             if (formaPagto == "01" && (numeroBanco != "341" && numeroBanco != "409"))
             {
                 x = "Para pagto via Crédito em Conta, é necessário que todos os Fornecedores selecionados tenham conta no banco Itaú!";
+            }
+            if (formaPagto == "41B" && corretora == false)
+            {
+                x = "Para pagto via TED P/ Corretora, é necessário que todos os Fornecedores selecionados tenham conta corretora";
             }
 
             return x;
