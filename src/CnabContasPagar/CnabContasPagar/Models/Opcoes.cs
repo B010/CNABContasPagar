@@ -8,7 +8,7 @@ namespace CnabContasPagar.Models
         public string EnderecoPagador { get; set; }
         public string NumeroAgencia { get; set; }
         public string NumeroContaCorrente { get; set; }
-        public char DAC { get; set; }
+        public string DAC { get; set; }
         public string RazaoSocial { get; set; }
         public string NomeBanco { get; set; }
 

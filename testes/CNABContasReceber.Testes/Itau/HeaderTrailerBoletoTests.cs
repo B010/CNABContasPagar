@@ -6,14 +6,14 @@ using Xunit;
 
 namespace CNABContasPagar.Testes.Itau
 {
-    public class HeaderTrailerTests
+    public class HeaderTrailerBoletoTests
     {
         private string _linha1;
         private string _linha2;
         private string _linha3;
         private string _linha4;
 
-        public HeaderTrailerTests()
+        public HeaderTrailerBoletoTests()
         {
             _linha1 = GerarLinhaHeader(Liquidacao1());
             _linha2 = GerarLinhaHeader(Liquidacao2());
@@ -39,7 +39,7 @@ namespace CNABContasPagar.Testes.Itau
         {
             var cnab = new BancoItau240(Opcoes());
             var sb = new StringBuilder();
-            cnab.HeaderDetalheComum(sb, liquidacao);
+            cnab.HeaderBoleto(sb, liquidacao);
 
             return sb.ToString();
         }
@@ -48,7 +48,7 @@ namespace CNABContasPagar.Testes.Itau
         {
             var cnab = new BancoItau240(Opcoes());
             var sb = new StringBuilder();
-            cnab.TrailerDetalheComum(sb, liquidacao);
+            cnab.TrailerBoleto(sb, liquidacao);
 
             return sb.ToString();
         }
@@ -85,7 +85,14 @@ namespace CNABContasPagar.Testes.Itau
                 NomeFavorecido = "LOJAS RENNER LTDA",
                 NossoNumero = "234645",
                 FormaPagamento = "41",
-                ValorPagamento = 120m
+                ValorPagamento = 120m,
+                InscricaoEmpresa = "2",
+                Documento = "66662",
+                CodigoBarras = "34196166700000123451101234567880057123457000",
+                ValorDesconto = 25m,
+                Multa = 0m,
+                Mora = 0m,
+                DataVencimento = new DateTime(2022, 11, 10)
             };
         }
 
@@ -102,7 +109,14 @@ namespace CNABContasPagar.Testes.Itau
                 NomeFavorecido = "LOJAS 2 LTDA",
                 NossoNumero = "344",
                 FormaPagamento = "41",
-                ValorPagamento = 11m
+                ValorPagamento = 11m,
+                InscricaoEmpresa = "2",
+                Documento = "66662",
+                CodigoBarras = "34196166700000123451101234567880057123457000",
+                ValorDesconto = 25m,
+                Multa = 0m,
+                Mora = 0m,
+                DataVencimento = new DateTime(2022, 11, 10)
             };
         }
 

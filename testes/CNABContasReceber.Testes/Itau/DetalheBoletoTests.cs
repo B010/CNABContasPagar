@@ -6,19 +6,19 @@ using Xunit;
 
 namespace CNABContasPagar.Testes.Itau
 {
-    public class DetalheATests
+    public class DetalheBoletoTests
     {
         private string _linha1;
         private string _linha2;
         private string _linha3;
         private string _linha4;
 
-        public DetalheATests()
+        public DetalheBoletoTests()
         {
             _linha1 = GerarLinhaDetalhe(Liquidacao1());
             _linha2 = GerarLinhaDetalhe(Liquidacao2());
-            _linha3 = GerarLinhaDetalhe(Liquidacao3());
-            _linha4 = GerarLinhaDetalhe(Liquidacao4());
+            _linha3 = GerarLinhaDetalheBoleto(Liquidacao3());
+            _linha4 = GerarLinhaDetalheBoleto(Liquidacao4());
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace CNABContasPagar.Testes.Itau
         public void Escreveu_Valor_Correto()
         {
             var linha = GerarLinhaDetalhe(Liquidacao1());
-            var valor = linha.Slice(120, 134);
+            var valor = linha.Slice(100, 114);
 
             Assert.Equal("000000000012000", valor);
 
@@ -44,9 +44,9 @@ namespace CNABContasPagar.Testes.Itau
         public void Escreveu_Data_Correta()
         {
             var linha = GerarLinhaDetalhe(Liquidacao1());
-            var valor = linha.Slice(94, 101);
+            var valor = linha.Slice(92, 99);
 
-            Assert.Equal("10102020", valor);
+            Assert.Equal("10102022", valor);
 
         }
 
@@ -54,7 +54,16 @@ namespace CNABContasPagar.Testes.Itau
         {
             var cnab = new BancoItau240(Opcoes());
             var sb = new StringBuilder();
-            cnab.DetalheA(sb, liquidacao);
+            cnab.DetalheBloqueto(sb, liquidacao); // segmento J
+
+            return sb.ToString();
+        }
+        
+        public static string GerarLinhaDetalheBoleto(Liquidacao liquidacao)
+        {
+            var cnab = new BancoItau240(Opcoes());
+            var sb = new StringBuilder();
+            cnab.DetalheBoleto(sb, liquidacao); // segmento J-52
 
             return sb.ToString();
         }
@@ -83,15 +92,22 @@ namespace CNABContasPagar.Testes.Itau
             return new Liquidacao()
             {
                 AgenciaFavorecido = "1233",
-                ContaFavorecido = "1233",
+                ContaFavorecido = "123763",
                 BancoFavorecido = "341",
                 CpfCnpjFavorecido = "32140856000159",
                 DacFavorecido = "3",
                 DataPagamento = new DateTime(2020, 10, 10),
                 NomeFavorecido = "LOJAS RENNER LTDA",
                 NossoNumero = "234645",
-                FormaPagamento = "41",
-                ValorPagamento = 120m
+                FormaPagamento = "30",
+                ValorPagamento = 120m,
+                InscricaoEmpresa = "2",
+                Documento = "66662",
+                CodigoBarras = "34196166700000123451101234567880057123457000",
+                ValorDesconto = 25m,
+                Multa = 0m,
+                Mora = 0m,
+                DataVencimento = new DateTime(2022, 10, 10)
             };
         }
 
@@ -100,15 +116,22 @@ namespace CNABContasPagar.Testes.Itau
             return new Liquidacao()
             {
                 AgenciaFavorecido = "1233",
-                ContaFavorecido = "2332",
+                ContaFavorecido = "233278",
                 BancoFavorecido = "341",
                 CpfCnpjFavorecido = "32140856000159",
                 DacFavorecido = "3",
                 DataPagamento = new DateTime(2020, 10, 10),
                 NomeFavorecido = "LOJAS RENNER LTDA",
                 NossoNumero = "234645",
-                FormaPagamento = "41",
-                ValorPagamento = 10m
+                FormaPagamento = "31",
+                ValorPagamento = 10m,
+                InscricaoEmpresa = "2",
+                Documento = "666666",
+                CodigoBarras = "34196166700000123451101234567880057123457000",
+                ValorDesconto = 25m,
+                Multa = 0m,
+                Mora = 0m,
+                DataVencimento = new DateTime(2022, 10, 10)
             };
         }
 
@@ -117,15 +140,22 @@ namespace CNABContasPagar.Testes.Itau
             return new Liquidacao()
             {
                 AgenciaFavorecido = "1233",
-                ContaFavorecido = "1233",
+                ContaFavorecido = "128733",
                 BancoFavorecido = "341",
                 CpfCnpjFavorecido = "32140856000159",
                 DacFavorecido = "3",
                 DataPagamento = new DateTime(2020, 10, 10),
                 NomeFavorecido = "LOJAS RENNER LTDA",
                 NossoNumero = "234645",
-                FormaPagamento = "41",
-                ValorPagamento = 10m
+                FormaPagamento = "30",
+                ValorPagamento = 10m,
+                InscricaoEmpresa = "2",
+                Documento = "66662",
+                CodigoBarras = "34196166700000123451101234567880057123457000",
+                ValorDesconto = 25m,
+                Multa = 0m,
+                Mora = 0m,
+                DataVencimento = new DateTime(2022, 10, 10)
             };
         }
 
@@ -134,15 +164,22 @@ namespace CNABContasPagar.Testes.Itau
             return new Liquidacao()
             {
                 AgenciaFavorecido = "1233",
-                ContaFavorecido = "0233",
+                ContaFavorecido = "023098",
                 BancoFavorecido = "341",
                 CpfCnpjFavorecido = "32140856000159",
                 DacFavorecido = "3",
                 DataPagamento = new DateTime(2020, 10, 10),
                 NomeFavorecido = "LOJAS RENNER LTDA",
                 NossoNumero = "234645",
-                FormaPagamento = "41",
-                ValorPagamento = 10m
+                FormaPagamento = "31",
+                ValorPagamento = 10m,
+                InscricaoEmpresa = "2",
+                Documento = "66662",
+                CodigoBarras = "34196166700000123451101234567880057123457000",
+                ValorDesconto = 25m,
+                Multa = 0m,
+                Mora = 0m,
+                DataVencimento = new DateTime(2022, 10, 10)
             };
         }
 
