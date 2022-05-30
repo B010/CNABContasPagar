@@ -257,11 +257,11 @@ namespace CnabContasPagar.Bancos
             b.Append('0');
             b.AppendNumero(14, Opcoes.CnpjPagador);
             b.AppendTexto(40, Opcoes.RazaoSocial);
-            b.AppendTexto(1, liquidacao.InscricaoEmpresa); // Beneficiário
-            b.AppendTexto(15, CnpjOuCpf(liquidacao));
+            b.AppendTexto(1, ChecaIncricaoEmp(liquidacao.CpfCnpjFavorecido)); // Beneficiário
+            b.AppendTexto(15, CnpjOuCpf(liquidacao.CpfCnpjFavorecido));
             b.AppendTexto(40, liquidacao.NomeFavorecido);
-            b.AppendTexto(1, liquidacao.InscricaoEmpresa); // Sacador Avalista
-            b.AppendTexto(15, CnpjOuCpf(liquidacao));
+            b.AppendTexto(1, ChecaIncricaoEmp(liquidacao.CpfCnpjFavorecido)); // Sacador Avalista
+            b.AppendTexto(15, CnpjOuCpf(liquidacao.CpfCnpjFavorecido));
             b.AppendTexto(40, liquidacao.NomeFavorecido);
             b.Append(new string(' ', 53));
             b.Append(Environment.NewLine);
@@ -344,7 +344,7 @@ namespace CnabContasPagar.Bancos
             return (texto.ToString());
         }
 
-        public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora)
+        public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora, string agencia, string conta)
         {
             var x = "";
 
@@ -356,23 +356,35 @@ namespace CnabContasPagar.Bancos
             {
                 x = "Para pagto via TED P/ Corretora, é necessário que todos os Fornecedores selecionados tenham conta corretora";
             }
+            if (agencia.Length > 4 || conta.Length > 6)
+            {
+                x = "Para pagar com Itaú ou Itaú Unibanco, é necessário que o Fornecedor tenha Agência com até 4 dígitos e Conta com até 6 dígitos";
+            }
 
             return x;
         }
 
-        private string CnpjOuCpf(Liquidacao liquidacao)
+        private string ChecaIncricaoEmp(string cnpjOuCpf)
+        {
+            string inscricaoEmpresa = cnpjOuCpf.Length == 11 ? "1" : "2";
+
+            return inscricaoEmpresa;
+        }
+
+        private string CnpjOuCpf(string cnpjOuCpf)
         {
             var texto = new StringBuilder();
+            var inscricaoEmpresa = ChecaIncricaoEmp(cnpjOuCpf);
 
-            if (liquidacao.InscricaoEmpresa == "1")
+            if (inscricaoEmpresa == "1")
             {
-                texto.AppendTexto(11, liquidacao.CpfCnpjFavorecido);
+                texto.AppendTexto(11, cnpjOuCpf);
                 texto.Append(new string(' ', 4));
             }
             else
             {
                 texto.Append('0');
-                texto.AppendTexto(14, liquidacao.CpfCnpjFavorecido);
+                texto.AppendTexto(14, cnpjOuCpf);
             }
 
             return (texto.ToString());
