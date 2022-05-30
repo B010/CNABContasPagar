@@ -220,7 +220,7 @@ namespace CnabContasPagar.Bancos
             b.Append(Environment.NewLine);
         }
 
-        public void DetalheBloqueto(StringBuilder b, Liquidacao liquidacao)
+        public void DetalheBloqueto(StringBuilder b, Liquidacao liquidacao) // Segmento J
         {
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
@@ -244,7 +244,7 @@ namespace CnabContasPagar.Bancos
             b.Append(Environment.NewLine);
         }
 
-        public void DetalheBoleto(StringBuilder b, Liquidacao liquidacao)
+        public void DetalheBoleto(StringBuilder b, Liquidacao liquidacao) // Segmento J-52
         {
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
