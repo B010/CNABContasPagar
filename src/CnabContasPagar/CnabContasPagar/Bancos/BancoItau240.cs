@@ -67,7 +67,6 @@ namespace CnabContasPagar.Bancos
         {
             if (liquidacao.FormaPagamento != "30" && liquidacao.FormaPagamento != "31")
             {
-
                 HeaderDetalheComum(b, liquidacao);
                 DetalheA(b, liquidacao);
                 TrailerDetalheComum(b, liquidacao);
@@ -344,7 +343,7 @@ namespace CnabContasPagar.Bancos
             return (texto.ToString());
         }
 
-        public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora, string agencia, string conta)
+        public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora, string agencia, string conta, string codBarras)
         {
             var x = "";
 
@@ -359,6 +358,10 @@ namespace CnabContasPagar.Bancos
             if (agencia.Length > 4 || conta.Length > 6)
             {
                 x = "Para pagar com Itaú ou Itaú Unibanco, é necessário que o Fornecedor tenha Agência com até 4 dígitos e Conta com até 6 dígitos";
+            }
+            if ((formaPagto == "30" || formaPagto == "31") && codBarras == "")
+            {
+                x = "Para pagto com Boleto, é necessário que todos os Títulos selecionados tenham Código de Barras informado.";
             }
 
             return x;
