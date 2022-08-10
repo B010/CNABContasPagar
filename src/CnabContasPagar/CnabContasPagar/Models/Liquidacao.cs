@@ -24,5 +24,10 @@ namespace CnabContasPagar.Models
         public decimal Multa { get; set; }
         public decimal Mora { get; set; }
         public DateTime DataVencimento { get; set; }
+        public string EnderecoFavorecido { get; set; }
+        public string BairroFavorecido { get; set; }
+        public string CidadeFavorecido { get; set; }
+        public string CepFavorecido { get; set; }
+        public string EstadoFavorecido { get; set; }
     }
 }
