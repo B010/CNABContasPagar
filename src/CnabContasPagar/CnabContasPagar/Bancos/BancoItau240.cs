@@ -69,7 +69,7 @@ namespace CnabContasPagar.Bancos
             {
                 HeaderDetalheComum(b, liquidacao);
                 DetalheA(b, liquidacao);
-                DetalheANF(b, liquidacao);
+                //DetalheANF(b, liquidacao); //Pagto por Nota Fiscal
 
                 if (ChecaInscricaoEmp(liquidacao.CpfCnpjFavorecido) == "2" && CincoPrimeirosCnpj(liquidacao.CpfCnpjFavorecido) == "00000")
                 {
@@ -188,9 +188,13 @@ namespace CnabContasPagar.Bancos
             {
                 b.AppendTexto(5, "00011"); // Finalidade da TED (Pgto a Corretoras)
             }
-            else
+            else if(liquidacao.FormaPagamento == "41")
             {
                 b.AppendTexto(5, "00005"); // Finalidade da TED (Pgto Fornecedores)
+            }
+            else
+            {
+                b.Append(new string(' ', 5));
             }
 
             b.Append(new string(' ', 5));
@@ -199,36 +203,36 @@ namespace CnabContasPagar.Bancos
             b.Append(Environment.NewLine);
         }
 
-        public void DetalheANF(StringBuilder b, Liquidacao liquidacao)   // ESSE BLOCO NÃO TINHA
-        {
-            b.Append("341"); //01-03
-            b.AppendNumero(4, codigoLote); //04-07
-            b.Append('3');
-            b.AppendNumero(5, codigoDetalhe);
-            b.Append('A');
-            b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
-            b.AppendNumero(3, 0);
-            b.AppendNumero(3, liquidacao.BancoFavorecido);
-            b.AppendTexto(20, FazerAgenciaContaFavorecido(liquidacao));
-            b.AppendTexto(30, liquidacao.NomeFavorecido);
-            b.AppendTexto(20, liquidacao.Documento); // Seu Numero
-            b.AppendData(liquidacao.DataPagamento);
-            b.Append("REA");
-            b.AppendNumero(15, 0);
-            b.AppendDinheiro(15, liquidacao.ValorPagamento);
-            b.Append(new string(' ', 20)); // Nosso Numero
-            b.AppendNumero(8, 0);
-            b.AppendNumero(15, 0);
-            b.AppendNumero(14, 0);
-            b.Append(new string(' ', 6));
-            b.AppendNumero(6, 0);
-            b.AppendNumero(14, liquidacao.CpfCnpjFavorecido);
-            b.AppendNumero(1, 0); // Tipo de Identificação
-            b.Append(new string(' ', 11));
-            b.Append('0');
-            b.Append(new string(' ', 10));
-            b.Append(Environment.NewLine);
-        }
+        //public void DetalheANF(StringBuilder b, Liquidacao liquidacao)   // ESSE BLOCO NÃO TINHA                  NÃO APAGAR ESSE BLOCO
+        //{
+        //    b.Append("341"); //01-03
+        //    b.AppendNumero(4, codigoLote); //04-07
+        //    b.Append('3');
+        //    b.AppendNumero(5, codigoDetalhe);
+        //    b.Append('A');
+        //    b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
+        //    b.AppendNumero(3, 0);
+        //    b.AppendNumero(3, liquidacao.BancoFavorecido);
+        //    b.AppendTexto(20, FazerAgenciaContaFavorecido(liquidacao));
+        //    b.AppendTexto(30, liquidacao.NomeFavorecido);
+        //    b.AppendTexto(20, liquidacao.Documento); // Seu Numero
+        //    b.AppendData(liquidacao.DataPagamento);
+        //    b.Append("REA");
+        //    b.AppendNumero(15, 0);
+        //    b.AppendDinheiro(15, liquidacao.ValorPagamento);
+        //    b.Append(new string(' ', 20)); // Nosso Numero
+        //    b.AppendNumero(8, 0);
+        //    b.AppendNumero(15, 0);
+        //    b.AppendNumero(14, 0);
+        //    b.Append(new string(' ', 6));
+        //    b.AppendNumero(6, 0);
+        //    b.AppendNumero(14, liquidacao.CpfCnpjFavorecido);
+        //    b.AppendNumero(1, 0); // Tipo de Identificação
+        //    b.Append(new string(' ', 11));
+        //    b.Append('0');
+        //    b.Append(new string(' ', 10));
+        //    b.Append(Environment.NewLine);
+        //}
 
         public void DetalheB(StringBuilder b, Liquidacao liquidacao)
         {
