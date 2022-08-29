@@ -194,7 +194,7 @@ namespace CnabContasPagar.Bancos
             }
             else
             {
-                b.Append(new string(' ', 5));
+                b.Append(new string(' ', 5)); // Cai aqui quando a forma de pagto e diferente de TED
             }
 
             b.Append(new string(' ', 5));
@@ -202,6 +202,8 @@ namespace CnabContasPagar.Bancos
             b.Append(new string(' ', 10));
             b.Append(Environment.NewLine);
         }
+
+        // O metodo a seguir esta comentado porque ainda nao foi implementado o pagto por NF
 
         //public void DetalheANF(StringBuilder b, Liquidacao liquidacao)   // ESSE BLOCO NÃO TINHA                  NÃO APAGAR ESSE BLOCO
         //{
