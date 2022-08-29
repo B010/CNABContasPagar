@@ -558,7 +558,7 @@ namespace CnabContasPagar.Bancos
             string campoTres = codBarras.Substring(21, 10);
             int dvTres = Convert.ToInt32(codBarras.Substring(31, 1));
 
-            int somaUm = 0, somaDois = 0, somaTres = 0, pesoTres = 2, restoUm, restoDois, restoTres;
+            int somaUm = 0, somaDois = 0, somaTres = 0, pesoUm = 2, pesoDois = 2, pesoTres = 2, restoUm, restoDois, restoTres;
 
             for (int i = campoTres.Length; i > 0; i--)
             {
@@ -575,7 +575,6 @@ namespace CnabContasPagar.Bancos
                     pesoTres = pesoTres + 1;
             }
             int dvCampo3 = ((10 - (somaTres % 10)) % 10);
-            int pesoDois = pesoTres == 2 ? 1 : 2;
 
             for (int i = campoDois.Length; i > 0; i--)
             {
@@ -592,7 +591,6 @@ namespace CnabContasPagar.Bancos
                     pesoDois = pesoDois + 1;
             }
             int dvCampo2 = ((10 - (somaDois % 10)) % 10);
-            int pesoUm = pesoDois == 2 ? 1 : 2;
 
             for (int i = campoUm.Length; i > 0; i--)
             {
