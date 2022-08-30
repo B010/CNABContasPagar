@@ -83,7 +83,7 @@ namespace CnabContasPagar.Bancos
                 HeaderBoleto(b, liquidacao);
                 DetalheBoleto(b, liquidacao);
                 DetalheBoletoOnline(b, liquidacao);
-                DetalhePix(b, liquidacao);
+                //DetalhePix(b, liquidacao);
                 TrailerBoleto(b, liquidacao);
             }
         }
@@ -205,7 +205,7 @@ namespace CnabContasPagar.Bancos
 
         // O metodo a seguir esta comentado porque ainda nao foi implementado o pagto por NF
 
-        //public void DetalheANF(StringBuilder b, Liquidacao liquidacao)   // ESSE BLOCO NÃO TINHA                  NÃO APAGAR ESSE BLOCO
+        //public void DetalheANF(StringBuilder b, Liquidacao liquidacao)   // ESSE BLOCO NÃO TINHA 
         //{
         //    b.Append("341"); //01-03
         //    b.AppendNumero(4, codigoLote); //04-07
@@ -352,26 +352,28 @@ namespace CnabContasPagar.Bancos
             b.Append(Environment.NewLine);
         }
 
-        public void DetalhePix(StringBuilder b, Liquidacao liquidacao) // Segmento J-52 PIX             ESSE BLOCO NÃO TINHA
-        {
-            b.Append("341"); //01-03
-            b.AppendNumero(4, codigoLote); //04-07
-            b.Append('3');
-            b.AppendNumero(5, codigoDetalhe);
-            b.Append('J');
-            b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
-            b.Append("52"); // Identificação do Registro Opcional
-            b.Append('2');
-            b.Append('0');
-            b.AppendNumero(14, Opcoes.CnpjPagador);
-            b.AppendTexto(40, Opcoes.RazaoSocial);
-            b.AppendTexto(1, ChecaInscricaoEmp(liquidacao.CpfCnpjFavorecido)); // Beneficiário
-            b.AppendTexto(15, CnpjOuCpf(liquidacao.CpfCnpjFavorecido));
-            b.AppendTexto(40, liquidacao.NomeFavorecido);
-            b.Append(new string(' ', 77));  // Chave de Pagto
-            b.Append(new string(' ', 32));  // Txid
-            b.Append(Environment.NewLine);
-        }
+        // Usar o bloco abaixo somente quando o pagto por PIX for implementado
+
+        //public void DetalhePix(StringBuilder b, Liquidacao liquidacao) // Segmento J-52 PIX
+        //{
+        //    b.Append("341"); //01-03
+        //    b.AppendNumero(4, codigoLote); //04-07
+        //    b.Append('3');
+        //    b.AppendNumero(5, codigoDetalhe);
+        //    b.Append('J');
+        //    b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
+        //    b.Append("52"); // Identificação do Registro Opcional
+        //    b.Append('2');
+        //    b.Append('0');
+        //    b.AppendNumero(14, Opcoes.CnpjPagador);
+        //    b.AppendTexto(40, Opcoes.RazaoSocial);
+        //    b.AppendTexto(1, ChecaInscricaoEmp(liquidacao.CpfCnpjFavorecido)); // Beneficiário
+        //    b.AppendTexto(15, CnpjOuCpf(liquidacao.CpfCnpjFavorecido));
+        //    b.AppendTexto(40, liquidacao.NomeFavorecido);
+        //    b.Append(new string(' ', 77));  // Chave de Pagto
+        //    b.Append(new string(' ', 32));  // Txid
+        //    b.Append(Environment.NewLine);
+        //}
 
         public void TrailerBoleto(StringBuilder b, Liquidacao liquidacao)
         {
