@@ -11,6 +11,7 @@ namespace CnabContasPagar.Bancos
     {
         private int codigoLote = 1;
         private int codigoDetalhe = 1;
+        private int qtdeLinhasArquivo = 1;
 
         public BancoItau240(Opcoes opcoes)
         {
@@ -23,6 +24,7 @@ namespace CnabContasPagar.Bancos
         {
             codigoLote = 0;
             codigoDetalhe = 0;
+            qtdeLinhasArquivo = 0;
 
             var b = new StringBuilder();
 
@@ -40,6 +42,8 @@ namespace CnabContasPagar.Bancos
 
         public void HeaderArquivo(StringBuilder b)
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+
             b.Append("34100000"); //01-08
             b.Append(new string(' ', 6)); //09-14
             b.Append("080"); //15-17                               ERA: 081
@@ -90,6 +94,8 @@ namespace CnabContasPagar.Bancos
 
         public void HeaderDetalheComum(StringBuilder b, Liquidacao liquidacao)
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+
             b.Append("341"); //01-03
             b.AppendNumero(4, ++codigoLote); //04-07
             b.Append('1'); //08-08
@@ -132,6 +138,9 @@ namespace CnabContasPagar.Bancos
 
         public void DetalheA(StringBuilder b, Liquidacao liquidacao)
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+            codigoDetalhe = 1; // NAO APAGAR
+
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
             b.Append('3');
@@ -207,10 +216,12 @@ namespace CnabContasPagar.Bancos
 
         //public void DetalheANF(StringBuilder b, Liquidacao liquidacao)   // ESSE BLOCO NÃO TINHA 
         //{
+        //    ++qtdeLinhasArquivo; //NAO APAGAR
+        //
         //    b.Append("341"); //01-03
         //    b.AppendNumero(4, codigoLote); //04-07
         //    b.Append('3');
-        //    b.AppendNumero(5, codigoDetalhe);
+        //    b.AppendNumero(5, ++codigoDetalhe);
         //    b.Append('A');
         //    b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
         //    b.AppendNumero(3, 0);
@@ -238,10 +249,12 @@ namespace CnabContasPagar.Bancos
 
         public void DetalheB(StringBuilder b, Liquidacao liquidacao)
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
             b.Append('3');
-            b.AppendNumero(5, codigoDetalhe);
+            b.AppendNumero(5, ++codigoDetalhe);
             b.Append('B');
             b.Append(new string(' ', 3));
             b.Append('2'); //Beneficiário
@@ -261,11 +274,13 @@ namespace CnabContasPagar.Bancos
 
         public void TrailerDetalheComum(StringBuilder b, Liquidacao liquidacao)
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+
             b.Append("341");
             b.AppendNumero(4, codigoLote);
             b.Append('5');
             b.Append(new string(' ', 9));
-            b.AppendNumero(6, codigoDetalhe);
+            b.AppendNumero(6, ++codigoDetalhe);
             b.AppendDinheiro(18, liquidacao.ValorPagamento);
             b.AppendNumero(18, 0);
             b.Append(new string(' ', 171));
@@ -275,6 +290,8 @@ namespace CnabContasPagar.Bancos
 
         public void HeaderBoleto(StringBuilder b, Liquidacao liquidacao)
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+
             b.Append("341"); //01-03
             b.AppendNumero(4, ++codigoLote); //04-07
             b.Append('1'); //08-08
@@ -307,6 +324,9 @@ namespace CnabContasPagar.Bancos
 
         public void DetalheBoleto(StringBuilder b, Liquidacao liquidacao) // Segmento J
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+            codigoDetalhe = 1;
+
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
             b.Append('3');
@@ -331,10 +351,12 @@ namespace CnabContasPagar.Bancos
 
         public void DetalheBoletoOnline(StringBuilder b, Liquidacao liquidacao) // Segmento J-52
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
             b.Append('3');
-            b.AppendNumero(5, codigoDetalhe);
+            b.AppendNumero(5, ++codigoDetalhe);
             b.Append('J');
             b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
             b.Append("52"); // Identificação do Registro Opcional
@@ -356,10 +378,12 @@ namespace CnabContasPagar.Bancos
 
         //public void DetalhePix(StringBuilder b, Liquidacao liquidacao) // Segmento J-52 PIX
         //{
+        //    ++qtdeLinhasArquivo; //NAO APAGAR
+        //
         //    b.Append("341"); //01-03
         //    b.AppendNumero(4, codigoLote); //04-07
         //    b.Append('3');
-        //    b.AppendNumero(5, codigoDetalhe);
+        //    b.AppendNumero(5, ++codigoDetalhe);
         //    b.Append('J');
         //    b.Append("000"); //TIPO DE MOVIMENTO (000 = Inclusão de pagamento)
         //    b.Append("52"); // Identificação do Registro Opcional
@@ -377,11 +401,13 @@ namespace CnabContasPagar.Bancos
 
         public void TrailerBoleto(StringBuilder b, Liquidacao liquidacao)
         {
+            ++qtdeLinhasArquivo; //NAO APAGAR
+
             b.Append("341");
             b.AppendNumero(4, codigoLote);
             b.Append('5');
             b.Append(new string(' ', 9));
-            b.AppendNumero(6, codigoDetalhe);
+            b.AppendNumero(6, ++codigoDetalhe);
             b.AppendDinheiro(18, liquidacao.ValorPagamento);
             b.AppendNumero(18, 0);
             b.Append(new string(' ', 171));
@@ -396,7 +422,7 @@ namespace CnabContasPagar.Bancos
             b.Append('9');
             b.Append(new string(' ', 9));
             b.AppendNumero(6, codigoLote);
-            b.AppendNumero(6, codigoDetalhe);
+            b.AppendNumero(6, ++qtdeLinhasArquivo);
             b.Append(new string(' ', 211));
             b.Append(Environment.NewLine);
         }
