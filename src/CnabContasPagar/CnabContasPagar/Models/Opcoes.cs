@@ -7,6 +7,7 @@ namespace CnabContasPagar.Models
         public string CnpjPagador { get; set; }
         public string EnderecoPagador { get; set; }
         public string NumeroAgencia { get; set; }
+        public string DigitoAgencia { get; set; }
         public string NumeroContaCorrente { get; set; }
         public string DAC { get; set; }
         public string RazaoSocial { get; set; }
@@ -18,5 +19,4 @@ namespace CnabContasPagar.Models
         public string Cidade { get; set; }
         public string UF { get; set; }
     }
-
 }

@@ -262,7 +262,7 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(5, ++codigoDetalhe);
             b.Append('B');
             b.Append(new string(' ', 3));
-            b.Append('2'); //Beneficiário
+            b.AppendTexto(1, ChecaInscricaoEmp(liquidacao.CpfCnpjFavorecido)); //Beneficiário
             b.AppendTexto(14, liquidacao.CpfCnpjFavorecido);
             b.AppendTexto(30, liquidacao.EnderecoFavorecido);
             b.AppendNumero(5, 0); //Numero
