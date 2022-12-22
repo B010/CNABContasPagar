@@ -18,5 +18,7 @@ namespace CnabContasPagar.Models
         public string Bairro { get; set; }
         public string Cidade { get; set; }
         public string UF { get; set; }
+
+        public string NumeroSequencial { get; set; }
     }
 }

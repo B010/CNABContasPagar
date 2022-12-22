@@ -30,5 +30,7 @@ namespace CnabContasPagar.Models
         public string CidadeFavorecido { get; set; }
         public string CepFavorecido { get; set; }
         public string EstadoFavorecido { get; set; }
+
+        public int ContadorRegistros { get; set; }
     }
 }

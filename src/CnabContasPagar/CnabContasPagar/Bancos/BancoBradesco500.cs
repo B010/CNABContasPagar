@@ -11,6 +11,8 @@ namespace CnabContasPagar.Bancos
     {
         private int qtdeLinhasArquivo = 1;
 
+        private decimal valorTotal = 0;
+
         public BancoBradesco500(Opcoes opcoes)
         {
             Opcoes = opcoes;
@@ -39,17 +41,13 @@ namespace CnabContasPagar.Bancos
         public void HeaderArquivo(StringBuilder b)
         {
             b.Append("0"); //01-01
-
-            b.AppendNumero(8, 0); //02-09 Codigo de Comunicacao                     -00127210 - Qual o Codigo?
-
+            b.Append("00127210"); //02-09 Codigo de Comunicacao
             b.Append('2'); //10-10 (1-CPF, 2-CNPJ)
             b.AppendNumero(15, Opcoes.CnpjPagador); //11-25
             b.AppendTexto(40, Opcoes.RazaoSocial.ToUpper()); //26-65
             b.Append("20"); //66-67 Pagto a Fornecedores
             b.Append("1"); //68-68
-
-            b.AppendNumero(5, "0"); //69-73 Numero da Remessa                       -00794 -Como funciona essa sequencia? 
-
+            b.AppendNumero(5, Opcoes.NumeroSequencial); //69-73 Numero Sequencial da Remessa
             b.Append("00000"); //74-78
             b.AppendData(DateTime.Now, "yyyyMMdd"); //79-86
             b.AppendData(DateTime.Now, "hhmmss"); //87-92
@@ -57,14 +55,10 @@ namespace CnabContasPagar.Bancos
             b.Append(new string(' ', 3)); //98-100
             b.Append(new string(' ', 5)); //101-105
             b.Append("0"); //106-106
-
-            b.Append(new string(' ', 74)); //107-180 Reservado para Empresa         -Posso deixar em branco?
-
+            b.Append(new string(' ', 74)); //107-180 Reservado para Empresa
             b.Append(new string(' ', 80)); //181-260
             b.Append(new string(' ', 217)); //261-477
-
-            b.AppendNumero(9, "0"); //478-486 Numero da Lista de Debito             -000000794 -Como funciona essa sequencia? 
-
+            b.AppendNumero(9, Opcoes.NumeroSequencial); //478-486 Numero Sequencial da Lista de Debito
             b.Append(new string(' ', 8)); //487-494
             b.AppendNumero(6, ++qtdeLinhasArquivo); //495-500
             b.Append(Environment.NewLine);
@@ -82,35 +76,37 @@ namespace CnabContasPagar.Bancos
 
         public void DetalheA(StringBuilder b, Liquidacao liquidacao)
         {
+            valorTotal += liquidacao.ValorPagamento;
+
             b.Append("1"); //01-01
-            b.AppendTexto(1, ChecaInscricaoEmp(liquidacao.CpfCnpjFavorecido)); //02-02
+            b.AppendNumero(1, ChecaInscricaoEmp(liquidacao.CpfCnpjFavorecido)); //02-02
             b.AppendNumero(15, liquidacao.CpfCnpjFavorecido); //03-17
             b.AppendTexto(30, liquidacao.NomeFavorecido.ToUpper()); //18-47
             b.AppendTexto(40, liquidacao.EnderecoFavorecido.ToUpper()); //48-87
             b.AppendNumero(8, liquidacao.CepFavorecido); //88-95
-            b.AppendNumero(3, liquidacao.BancoFavorecido); //96-98
-            b.AppendNumero(5, liquidacao.AgenciaFavorecido); //99-103
-            b.AppendNumero(1, liquidacao.DigitoAgenciaFavorecido); //104-104
-            b.AppendNumero(13, liquidacao.ContaFavorecido); //105-117
-            b.AppendNumero(1, liquidacao.DacFavorecido); //118-118
-            b.Append(new string(' ', 1)); //119-119
-
-            b.Append(new string(' ', 16)); //120-135 Numero do Pagamento                           O que colocar aqui?
-
+            b.AppendNumero(3, CodBanco(liquidacao)); //96-98
+            b.AppendNumero(6, Agencia(liquidacao)); //99-104
+            b.AppendNumero(15, Conta(liquidacao)); //105-119
+            if (liquidacao.FormaPagamento == "30") // Modalidade DDA
+            {
+                b.Append(new string(' ', 16)); //120-135 Numero do Pagamento
+            }
+            else
+            {
+                b.AppendTexto(16, (++liquidacao.ContadorRegistros).ToString()); //120-135 Numero do Pagamento -SÓ PODE REUTILIZAR O MSM NUMERO APÓS 45 DIAS
+            }
             if (liquidacao.FormaPagamento == "31")
             {
                 b.AppendNumero(3, Carteira(liquidacao.CodigoBarras)); //136-138 Carteira
             }
-            if (liquidacao.FormaPagamento == "30")
+            else if (liquidacao.FormaPagamento == "30") // Modalidade DDA
             {
-                b.Append("000"); //136-138 Carteira                                                "Consta do Arquivo de Rastreamento"
-                                                                                                   //O que colocar aqui? Onde consigo esse arquivo?
+                b.Append("000"); //136-138 Carteira
             }
             else
             {
                 b.Append("000"); //136-138 Carteira
             }
-
             if (liquidacao.FormaPagamento == "31")
             {
                 b.AppendNumero(12, NossoNumero(liquidacao.CodigoBarras)); //139-150 Nosso Numero
@@ -119,46 +115,43 @@ namespace CnabContasPagar.Bancos
             {
                 b.AppendNumero(12, "0"); //139-150 Nosso Numero
             }
-
-            if (liquidacao.FormaPagamento == "30")
+            if (liquidacao.FormaPagamento == "30") // Modalidade DDA
             {
-                b.Append(new string(' ', 15)); //151-165 Seu Numero                                O que colocar aqui?
+                b.Append(new string(' ', 15)); //151-165 Seu Numero
             }
             else
             {
                 b.Append(new string(' ', 15)); //151-165 Seu Numero
             }
-
             b.AppendData(liquidacao.DataVencimento, "yyyyMMdd"); //166-173
             b.AppendNumero(8, "0"); //174-181
             b.AppendData(liquidacao.DataVencimento, "yyyyMMdd"); //182-189
             b.Append('0'); //190-190
-            b.Append(FatorVencimento(liquidacao.CodigoBarras)); //191-194
-
+            b.AppendNumero(4, FatorVencimento(liquidacao.CodigoBarras)); //191-194
             if (liquidacao.FormaPagamento == "31")
             {
                 b.AppendNumero(10, ValorConstante(liquidacao.CodigoBarras)); //195-204 Valor Documento
             }
-            if (liquidacao.FormaPagamento == "30")
+            else if (liquidacao.FormaPagamento == "30") // Modalidade DDA
             {
-                b.AppendNumero(10, "0"); //195-204 Valor Documento                                  O que colocar aqui?
+                b.AppendNumero(10, "0"); //195-204 Valor Documento
             }
             else
             {
                 b.AppendDinheiro(10, CalculaValores(liquidacao.ValorPagamento, liquidacao.Multa, liquidacao.Mora, "DOC")); //195-204 Valor Documento
             }
-
             b.AppendDinheiro(15, CalculaValores(liquidacao.ValorPagamento, liquidacao.Multa, liquidacao.Mora, "DOC")); //205-219 Valor Pagto
             b.AppendDinheiro(15, 0); //220-234 Valor Desconto
             b.AppendDinheiro(15, CalculaValores(liquidacao.ValorPagamento, liquidacao.Multa, liquidacao.Mora, "VA")); //195-204 Valor Acrescimo
             b.Append("01"); //250-251 Tipo Doc
-            b.AppendTexto(12, liquidacao.Documento); //252-263 Numero Nota
+            b.AppendNumero(10, liquidacao.Documento); //252-261 Numero Nota
+            b.Append(new string(' ', 2)); //262-263 Serie Nota
             b.AppendNumero(2, liquidacao.FormaPagamento); //264-265
             b.AppendData(liquidacao.DataPagamento, "yyyyMMdd"); //266-273
             b.Append(new string(' ', 3)); //274-276
             b.Append("01"); //277-278
             b.Append(new string(' ', 10)); //279-288
-            if (liquidacao.FormaPagamento == "30")
+            if (liquidacao.FormaPagamento == "30") // Modalidade DDA
             {
                 b.Append("5"); //289-289
             }
@@ -178,7 +171,7 @@ namespace CnabContasPagar.Bancos
             {
                 b.Append(new string(' ', 40)); //374-413
             }
-            if (liquidacao.FormaPagamento == "03" || liquidacao.FormaPagamento == "08")
+            else if (liquidacao.FormaPagamento == "03" || liquidacao.FormaPagamento == "08")
             {
                 b.Append("C"); //374-374
                 b.Append("000000"); //375-380
@@ -187,14 +180,14 @@ namespace CnabContasPagar.Bancos
                 b.AppendNumero(18, 0); //385-402
                 b.Append(new string(' ', 11)); //403-413
             }
-            if (liquidacao.FormaPagamento == "30")
+            else if (liquidacao.FormaPagamento == "30") // Modalidade DDA
             {
                 b.Append(new string(' ', 25)); //374-398
                 b.AppendNumero(15, liquidacao.CpfCnpjFavorecido); //399-413
             }
             else
             {
-                b.AppendNumero(25, CampoLivre(liquidacao.CodigoBarras)); //374-398                          Duvida na funcao!!
+                b.AppendNumero(25, CampoLivre(liquidacao.CodigoBarras)); //374-398
                 b.AppendNumero(1, DigitoVerificador(liquidacao.CodigoBarras)); //399-399
                 b.AppendNumero(1, CodigoMoeda(liquidacao.CodigoBarras)); //400-400
                 b.Append(new string(' ', 13)); //401-413
@@ -202,9 +195,7 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(2, "0"); //414-415
             b.Append(new string(' ', 35)); //416-450
             b.Append(new string(' ', 22)); //451-472
-
-            b.AppendNumero(5, "0"); //473-477                                                   O que colocar aqui? Quais os codigos já cadastrados?
-
+            b.AppendNumero(5, liquidacao.FormaPagamento); //473-477
             b.Append(new string(' ', 1)); //478-478
             if (liquidacao.FormaPagamento == "01")
             {
@@ -214,9 +205,7 @@ namespace CnabContasPagar.Bancos
             {
                 b.Append("0"); //479-479
             }
-
-            b.Append("0000000"); //480-486 Conta Complementar                                  Qual o codigo?
-
+            b.AppendNumero(7, Opcoes.NumeroContaCorrente);//480-486 Conta Complementar
             b.Append(new string(' ', 8)); //487-494
             b.AppendNumero(6, ++qtdeLinhasArquivo); //495-500
             b.Append(Environment.NewLine);
@@ -234,20 +223,102 @@ namespace CnabContasPagar.Bancos
 
         public void TrailerArquivo(StringBuilder b)
         {
-            decimal valorSomado = 0;
-
             b.Append("9"); //01-01
             b.AppendNumero(6, ++qtdeLinhasArquivo); //02-07 Qtde Registros
-            b.AppendDinheiro(17, valorSomado); //08-24                              Soma de todos os valores a serem pagos nos Registros de Transacao?
+            b.AppendDinheiro(17, valorTotal); //08-24
             b.Append(new string(' ', 470)); //25-494
             b.AppendNumero(6, qtdeLinhasArquivo); //495-500 Numero Sequencial
             b.Append(Environment.NewLine);
         }
 
+        private string CodBanco(Liquidacao liquidacao)
+        {
+            string d = "0";
+
+            if (liquidacao.CodigoBarras != "")
+                d = liquidacao.CodigoBarras.Substring(0, 3);
+            else
+                d = liquidacao.BancoFavorecido;
+
+            return d;
+        }
+
+        private string Agencia(Liquidacao liquidacao)
+        {
+            string d = "0", a = "", da = "", banco = "";
+
+            if (liquidacao.CodigoBarras != "")
+            {
+                banco = liquidacao.CodigoBarras.Substring(0, 3);
+
+                if (banco == "237")
+                {
+                    if (liquidacao.CodigoBarras.Length == 44)
+                    {
+                        a = liquidacao.CodigoBarras.Substring(10, 4);
+                        da = CalculaDvAgenciaConta(a);
+
+                        d = a + da;
+                    }
+                    if (liquidacao.CodigoBarras.Length == 47)
+                    {
+                        a = liquidacao.CodigoBarras.Substring(4, 4);
+                        da = CalculaDvAgenciaConta(a);
+
+                        d = a + da;
+                    }
+                }
+            }
+            else
+            {
+                a = liquidacao.AgenciaFavorecido;
+                da = liquidacao.DigitoAgenciaFavorecido;
+
+                d = a + da;
+            }
+
+            return d;
+        }
+
+        private string Conta(Liquidacao liquidacao)
+        {
+            string d = "0", c = "", dc = "", banco = "";
+
+            if (liquidacao.CodigoBarras != "")
+            {
+                banco = liquidacao.CodigoBarras.Substring(0, 3);
+
+                if (banco == "237")
+                {
+                    if (liquidacao.CodigoBarras.Length == 44)
+                    {
+                        c = liquidacao.CodigoBarras.Substring(36, 7);
+                        dc = CalculaDvAgenciaConta(c);
+
+                        d = c + dc + " ";
+                    }
+                    if (liquidacao.CodigoBarras.Length == 47)
+                    {
+                        c = liquidacao.CodigoBarras.Substring(23, 7);
+                        dc = CalculaDvAgenciaConta(c);
+
+                        d = c + dc + " ";
+                    }
+                }
+            }
+            else
+            {
+                c = liquidacao.ContaFavorecido;
+                dc = liquidacao.DacFavorecido;
+
+                d = c + dc;
+            }
+
+            return d;
+        }
+
         private string CodigoMoeda(string codBarras)
         {
-            //291 9 7 1044 0000200000 0417090001260000600957300
-
             string d = "0";
 
             if (codBarras != "")
@@ -379,24 +450,11 @@ namespace CnabContasPagar.Bancos
                 }
                 if (codBarras.Length == 47)
                 {
-                    banco = codBarras.Substring(0, 3);
+                    var um = codBarras.Substring(4, 5);
+                    var dois = codBarras.Substring(10, 10);
+                    var tres = codBarras.Substring(21, 10);
 
-                    if (banco == "237")
-                    {
-                        //Exemplo da Linha digitável padrão Bradesco, pag 46
-
-                        //No exemplo, o Campo Livre tem 31 posicoes (sem contar os 3 digitos)
-
-                        //Qual é o Campo Livre?
-                    }
-                    else
-                    {
-                        var um = codBarras.Substring(4, 5);
-                        var dois = codBarras.Substring(10, 10);
-                        var tres = codBarras.Substring(21, 10);
-
-                        d = um + dois + tres;
-                    }
+                    d = um + dois + tres;
                 }
             }
 
@@ -426,6 +484,38 @@ namespace CnabContasPagar.Bancos
             return d;
         }
 
+        private string CalculaDvAgenciaConta(string agenciaConta)
+        {
+            int mult = 0, total = 0, posicao = 1, limite = 7, digito = 0, resto = 0;
+            string num = string.Empty;
+
+            mult += 1 + (agenciaConta.Length % (limite - 1));
+
+            if (mult == 1)
+                mult = limite;
+
+            while (posicao <= agenciaConta.Length)
+            {
+                num = Mid(agenciaConta, posicao, 1);
+                total += Convert.ToInt32(num) * mult;
+
+                mult -= 1;
+                if (mult == 1)
+                    mult = limite;
+
+                posicao += 1;
+            }
+
+            resto += (total % 11);
+
+            if (resto == 0 || resto == 1)
+                digito += 0;
+            else
+                digito += (11 - resto);
+
+            return digito.ToString();
+        }
+
         public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora, string codBarras)
         {
             var x = "";
@@ -436,7 +526,7 @@ namespace CnabContasPagar.Bancos
             }
             if (formaPagto == "31" && codBarras == "")
             {
-                x = "Para pagto de Boletos de Outros Bancos, é necessário que todos os Títulos selecionados tenham Código de Barras informado.";
+                x = "Para pagto via Boleto, é necessário que todos os Títulos selecionados tenham Código de Barras informado.";
             }
 
             return x;
