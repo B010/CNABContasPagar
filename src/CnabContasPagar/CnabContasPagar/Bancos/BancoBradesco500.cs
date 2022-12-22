@@ -80,7 +80,7 @@ namespace CnabContasPagar.Bancos
 
             b.Append("1"); //01-01
             b.AppendNumero(1, ChecaInscricaoEmp(liquidacao.CpfCnpjFavorecido)); //02-02
-            b.AppendNumero(15, liquidacao.CpfCnpjFavorecido); //03-17
+            b.AppendNumero(15, FormataCpf(liquidacao)); //03-17
             b.AppendTexto(30, liquidacao.NomeFavorecido.ToUpper()); //18-47
             b.AppendTexto(40, liquidacao.EnderecoFavorecido.ToUpper()); //48-87
             b.AppendNumero(8, liquidacao.CepFavorecido); //88-95
@@ -93,7 +93,7 @@ namespace CnabContasPagar.Bancos
             }
             else
             {
-                b.AppendTexto(16, (++liquidacao.ContadorRegistros).ToString()); //120-135 Numero do Pagamento -SÓ PODE REUTILIZAR O MSM NUMERO APÓS 45 DIAS
+                b.AppendTexto(16, (liquidacao.ContadorRegistros).ToString()); //120-135 Numero do Pagamento -SÓ PODE REUTILIZAR O MSM NUMERO APÓS 45 DIAS
             }
             if (liquidacao.FormaPagamento == "31")
             {
@@ -141,7 +141,7 @@ namespace CnabContasPagar.Bancos
                 b.AppendDinheiro(10, CalculaValores(liquidacao.ValorPagamento, liquidacao.Multa, liquidacao.Mora, "DOC")); //195-204 Valor Documento
             }
             b.AppendDinheiro(15, CalculaValores(liquidacao.ValorPagamento, liquidacao.Multa, liquidacao.Mora, "DOC")); //205-219 Valor Pagto
-            b.AppendDinheiro(15, 0); //220-234 Valor Desconto
+            b.AppendDinheiro(15, ValorDesconto(liquidacao)); //220-234 Valor Desconto
             b.AppendDinheiro(15, CalculaValores(liquidacao.ValorPagamento, liquidacao.Multa, liquidacao.Mora, "VA")); //195-204 Valor Acrescimo
             b.Append("01"); //250-251 Tipo Doc
             b.AppendNumero(10, liquidacao.Documento); //252-261 Numero Nota
@@ -157,14 +157,21 @@ namespace CnabContasPagar.Bancos
             }
             else
             {
-                b.Append("1"); //289-289
+                b.Append("0"); //289-289
             }
             b.Append("00"); //290-291
             b.Append(new string(' ', 4)); //292-295
             b.Append(new string(' ', 15)); //296-310
             b.Append(new string(' ', 15)); //311-325
             b.Append(new string(' ', 6)); //326-331
-            b.AppendTexto(40, liquidacao.NomeFavorecido.ToUpper()); //332-371
+            if (liquidacao.FormaPagamento == "30" || liquidacao.FormaPagamento == "31")
+            {
+                b.AppendTexto(40, liquidacao.NomeFavorecido.ToUpper()); //332-371
+            }
+            else
+            {
+                b.Append(new string(' ', 40)); //332-371
+            }
             b.Append(new string(' ', 1)); //372-372
             b.Append(new string(' ', 1)); //373-373
             if (liquidacao.FormaPagamento == "01")
@@ -195,7 +202,7 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(2, "0"); //414-415
             b.Append(new string(' ', 35)); //416-450
             b.Append(new string(' ', 22)); //451-472
-            b.AppendNumero(5, liquidacao.FormaPagamento); //473-477
+            b.Append("00000"); //473-477
             b.Append(new string(' ', 1)); //478-478
             if (liquidacao.FormaPagamento == "01")
             {
@@ -229,6 +236,23 @@ namespace CnabContasPagar.Bancos
             b.Append(new string(' ', 470)); //25-494
             b.AppendNumero(6, qtdeLinhasArquivo); //495-500 Numero Sequencial
             b.Append(Environment.NewLine);
+        }
+
+        private string FormataCpf(Liquidacao liquidacao)
+        {
+            string d = "0";
+
+            if (liquidacao.CpfCnpjFavorecido.Length == 11)
+            {
+                var um = liquidacao.CpfCnpjFavorecido.Substring(0, 9);
+                var dois = liquidacao.CpfCnpjFavorecido.Substring(9, 2);
+
+                d = um + "0000" + dois;
+            }
+            else
+                d = liquidacao.CpfCnpjFavorecido;
+
+            return d;
         }
 
         private string CodBanco(Liquidacao liquidacao)
@@ -459,6 +483,24 @@ namespace CnabContasPagar.Bancos
             }
 
             return d;
+        }
+
+        private decimal ValorDesconto(Liquidacao liquidacao)
+        {
+            decimal desconto = 0, vc = 0;
+
+            if (liquidacao.CodigoBarras != "")
+            {
+                if (liquidacao.CodigoBarras.Length == 44)
+                    vc = Convert.ToDecimal(liquidacao.CodigoBarras.Substring(9, 10)) / 100;
+                if (liquidacao.CodigoBarras.Length == 47)
+                    vc = Convert.ToDecimal(liquidacao.CodigoBarras.Substring(37, 10)) / 100;               
+            }
+
+            if (vc != 0)
+                desconto = vc - liquidacao.ValorPagamento;
+
+            return desconto;
         }
 
         private decimal CalculaValores(decimal valor, decimal multa, decimal mora, string calculo)
