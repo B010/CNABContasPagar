@@ -12,6 +12,7 @@ namespace CnabContasPagar.Models
         public string DAC { get; set; }
         public string RazaoSocial { get; set; }
         public string NomeBanco { get; set; }
+        public string NumeroConvenio { get; set; }
 
         public string Numero { get; set; }
         public string Cep { get; set; }

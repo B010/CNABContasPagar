@@ -41,7 +41,7 @@ namespace CnabContasPagar.Bancos
         public void HeaderArquivo(StringBuilder b)
         {
             b.Append("0"); //01-01
-            b.Append("00127210"); //02-09 Codigo de Comunicacao
+            b.AppendNumero(8, Opcoes.NumeroConvenio); //02-09 Codigo de Comunicacao
             b.Append('2'); //10-10 (1-CPF, 2-CNPJ)
             b.AppendNumero(15, Opcoes.CnpjPagador); //11-25
             b.AppendTexto(40, Opcoes.RazaoSocial.ToUpper()); //26-65
