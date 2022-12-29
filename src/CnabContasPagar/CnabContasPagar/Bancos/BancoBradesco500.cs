@@ -125,7 +125,8 @@ namespace CnabContasPagar.Bancos
             }
             b.AppendData(liquidacao.DataVencimento, "yyyyMMdd"); //166-173
             b.AppendNumero(8, "0"); //174-181
-            b.AppendData(liquidacao.DataVencimento, "yyyyMMdd"); //182-189
+            //b.AppendData(liquidacao.DataVencimento, "yyyyMMdd"); //182-189 Data Limite para Desconto - So informar quando tiver valor de desconto
+            b.Append("00000000"); //182-189 Data Limite para Desconto - So informar quando tiver valor de desconto
             b.Append('0'); //190-190
             b.AppendNumero(4, FatorVencimento(liquidacao.CodigoBarras)); //191-194
             if (liquidacao.FormaPagamento == "31")
@@ -333,7 +334,11 @@ namespace CnabContasPagar.Bancos
             else
             {
                 c = liquidacao.ContaFavorecido;
-                dc = liquidacao.DacFavorecido;
+
+                if (liquidacao.DacFavorecido.Length == 1)
+                    dc = liquidacao.DacFavorecido + " ";
+                else
+                    dc = liquidacao.DacFavorecido;
 
                 d = c + dc;
             }
