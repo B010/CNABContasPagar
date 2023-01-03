@@ -175,7 +175,7 @@ namespace CnabContasPagar.Bancos
             }
             b.Append(new string(' ', 1)); //372-372
             b.Append(new string(' ', 1)); //373-373
-            if (liquidacao.FormaPagamento == "01")
+            if (liquidacao.FormaPagamento == "01" || liquidacao.FormaPagamento == "05")
             {
                 b.Append(new string(' ', 40)); //374-413
             }
@@ -205,7 +205,7 @@ namespace CnabContasPagar.Bancos
             b.Append(new string(' ', 22)); //451-472
             b.Append("00000"); //473-477
             b.Append(new string(' ', 1)); //478-478
-            if (liquidacao.FormaPagamento == "01")
+            if (liquidacao.FormaPagamento == "01" || liquidacao.FormaPagamento == "05")
             {
                 b.Append("1"); //479-479
             }
