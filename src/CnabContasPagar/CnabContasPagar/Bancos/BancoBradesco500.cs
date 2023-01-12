@@ -563,22 +563,6 @@ namespace CnabContasPagar.Bancos
             return digito.ToString();
         }
 
-        public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora, string codBarras)
-        {
-            var x = "";
-
-            if (formaPagto == "01" && numeroBanco != "237")
-            {
-                x = "Para pagto via Crédito em Conta, é necessário que todos os Fornecedores selecionados tenham conta no banco Bradesco!";
-            }
-            if (formaPagto == "31" && codBarras == "")
-            {
-                x = "Para pagto via Boleto, é necessário que todos os Títulos selecionados tenham Código de Barras informado.";
-            }
-
-            return x;
-        }
-
         private string ChecaInscricaoEmp(string cnpjOuCpf)
         {
             string inscricaoEmpresa = cnpjOuCpf.Length == 11 ? "1" : "2";

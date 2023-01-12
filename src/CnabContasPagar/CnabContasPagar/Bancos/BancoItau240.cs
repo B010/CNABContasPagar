@@ -478,26 +478,6 @@ namespace CnabContasPagar.Bancos
             return (texto.ToString());
         }
 
-        public string ValidaPagto(string formaPagto, string numeroBanco, bool corretora, string codBarras)
-        {
-            var x = "";
-
-            if (formaPagto == "01" && (numeroBanco != "341" && numeroBanco != "409"))
-            {
-                x = "Para pagto via Crédito em Conta, é necessário que todos os Fornecedores selecionados tenham conta no banco Itaú!";
-            }
-            if (formaPagto == "41B" && corretora == false)
-            {
-                x = "Para pagto via TED P/ Corretora, é necessário que todos os Fornecedores selecionados tenham conta corretora";
-            }
-            if ((formaPagto == "30" || formaPagto == "31") && codBarras == "")
-            {
-                x = "Para pagto via Boleto, é necessário que todos os Títulos selecionados tenham Código de Barras informado.";
-            }
-
-            return x;
-        }
-
         private string ChecaInscricaoEmp(string cnpjOuCpf)
         {
             string inscricaoEmpresa = cnpjOuCpf.Length == 11 ? "1" : "2";
