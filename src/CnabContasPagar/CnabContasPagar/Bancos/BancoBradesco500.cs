@@ -87,6 +87,7 @@ namespace CnabContasPagar.Bancos
             b.AppendNumero(3, CodBanco(liquidacao)); //96-98
             b.AppendNumero(6, Agencia(liquidacao)); //99-104
             b.AppendNumero(15, Conta(liquidacao)); //105-119
+
             if (liquidacao.FormaPagamento == "30") // Modalidade DDA
             {
                 b.Append(new string(' ', 16)); //120-135 Numero do Pagamento
@@ -95,34 +96,19 @@ namespace CnabContasPagar.Bancos
             {
                 b.AppendTexto(16, (liquidacao.ContadorRegistros).ToString()); //120-135 Numero do Pagamento -SÓ PODE REUTILIZAR O MSM NUMERO APÓS 45 DIAS
             }
+
             if (liquidacao.FormaPagamento == "31")
             {
                 b.AppendNumero(3, Carteira(liquidacao.CodigoBarras)); //136-138 Carteira
-            }
-            else if (liquidacao.FormaPagamento == "30") // Modalidade DDA
-            {
-                b.Append("000"); //136-138 Carteira
-            }
-            else
-            {
-                b.Append("000"); //136-138 Carteira
-            }
-            if (liquidacao.FormaPagamento == "31")
-            {
                 b.AppendNumero(12, NossoNumero(liquidacao.CodigoBarras)); //139-150 Nosso Numero
             }
             else
             {
+                b.Append("000"); //136-138 Carteira
                 b.AppendNumero(12, "0"); //139-150 Nosso Numero
             }
-            if (liquidacao.FormaPagamento == "30") // Modalidade DDA
-            {
-                b.Append(new string(' ', 15)); //151-165 Seu Numero
-            }
-            else
-            {
-                b.Append(new string(' ', 15)); //151-165 Seu Numero
-            }
+
+            b.AppendTexto(15, liquidacao.NossoNumero); //151-165 Seu Numero
             b.AppendData(liquidacao.DataVencimento, "yyyyMMdd"); //166-173
             b.AppendNumero(8, "0"); //174-181
             //b.AppendData(liquidacao.DataVencimento, "yyyyMMdd"); //182-189 Data Limite para Desconto - So informar quando tiver valor de desconto

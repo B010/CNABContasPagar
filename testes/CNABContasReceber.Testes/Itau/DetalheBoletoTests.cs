@@ -54,7 +54,7 @@ namespace CNABContasPagar.Testes.Itau
         {
             var cnab = new BancoItau240(Opcoes());
             var sb = new StringBuilder();
-            cnab.DetalheBloqueto(sb, liquidacao); // segmento J
+            cnab.DetalheBoleto(sb, liquidacao); // segmento J
 
             return sb.ToString();
         }
