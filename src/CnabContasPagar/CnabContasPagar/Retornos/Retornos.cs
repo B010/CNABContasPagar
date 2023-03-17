@@ -65,7 +65,8 @@ namespace CnabContasPagar.Retornos
                         DataPrevista = RetornaDataPrevista(retorno.CodigoBanco, S),
                         NomeFornecedor = RetornaNomeFornecedor(retorno.CodigoBanco, S),
                         ValorAcrescimo = RetornaValorAcrescimo(retorno.CodigoBanco, S),
-                        ValorDesconto = RetornaValorDesconto(retorno.CodigoBanco, S)
+                        ValorDesconto = RetornaValorDesconto(retorno.CodigoBanco, S),
+                        Erro = RetornaValorErro(retorno.CodigoBanco, S)
                     });
 
                 }
@@ -121,6 +122,14 @@ namespace CnabContasPagar.Retornos
                 return (Convert.ToDecimal(linha.Substring(219, 15)) / 100);
 
             return 0;
+        }
+
+        public string RetornaValorErro(string numeroBanco, string linha)
+        {
+            if (numeroBanco == "237")
+                return linha.Substring(279, 10);
+
+            return "";
         }
 
         public decimal RetornaValorAcrescimo(string numeroBanco, string linha)
