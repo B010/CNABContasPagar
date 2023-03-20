@@ -28,5 +28,6 @@ namespace CnabContasPagar.Models
         public string NomeFornecedor { get; set; }
         public int Situacao { get; set; }
         public string TextoSituacao { get; set; }
+        public string Erro { get; set; }
     }
 }
