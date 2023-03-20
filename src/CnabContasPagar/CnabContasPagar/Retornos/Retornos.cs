@@ -53,20 +53,25 @@ namespace CnabContasPagar.Retornos
 
                 if (S.Substring(0, 1) == "1")
                 {
-                    retorno.Itens.Add(new ItemRetorno
+                    if (PodeProsseguir(retorno.CodigoBanco, S))
                     {
-                        NumeroLinha = RetornaLinha(retorno.CodigoBanco, S),
-                        IdTitulo = RetornaTitulo(retorno.CodigoBanco, S),
-                        Parcela = RetornaParcela(retorno.CodigoBanco, S),
-                        IdBanco = RetornaIdBanco(retorno.CodigoBanco, S),
-                        Valor = RetornaValorPago(retorno.CodigoBanco, S),
-                        Situacao = RetornaSituacao(retorno.CodigoBanco, S),
-                        TextoSituacao = RetornaTextoSituacao(retorno.CodigoBanco, retorno.CodigoAviso, RetornaSituacao(retorno.CodigoBanco, S)),
-                        DataPrevista = RetornaDataPrevista(retorno.CodigoBanco, S),
-                        NomeFornecedor = RetornaNomeFornecedor(retorno.CodigoBanco, S),
-                        ValorAcrescimo = RetornaValorAcrescimo(retorno.CodigoBanco, S),
-                        ValorDesconto = RetornaValorDesconto(retorno.CodigoBanco, S)
-                    });
+
+                        retorno.Itens.Add(new ItemRetorno
+                        {
+                            NumeroLinha = RetornaLinha(retorno.CodigoBanco, S),
+                            IdTitulo = RetornaTitulo(retorno.CodigoBanco, S),
+                            Parcela = RetornaParcela(retorno.CodigoBanco, S),
+                            IdBanco = RetornaIdBanco(retorno.CodigoBanco, S),
+                            Valor = RetornaValorPago(retorno.CodigoBanco, S),
+                            Situacao = RetornaSituacao(retorno.CodigoBanco, S),
+                            TextoSituacao = RetornaTextoSituacao(retorno.CodigoBanco, retorno.CodigoAviso, RetornaSituacao(retorno.CodigoBanco, S)),
+                            DataPrevista = RetornaDataPrevista(retorno.CodigoBanco, S),
+                            NomeFornecedor = RetornaNomeFornecedor(retorno.CodigoBanco, S),
+                            ValorAcrescimo = RetornaValorAcrescimo(retorno.CodigoBanco, S),
+                            ValorDesconto = RetornaValorDesconto(retorno.CodigoBanco, S),
+                            ValorTitulo = RetornaValorTitulo(retorno.CodigoBanco, S)
+                        });
+                    }
 
                 }
             }
@@ -83,10 +88,19 @@ namespace CnabContasPagar.Retornos
             return 0;
         }
 
+        public bool PodeProsseguir(string numeroBanco, string linha)
+        {
+            if (numeroBanco == "237")
+                if (linha.Substring(150, 15).Contains("A"))
+                    return true;
+
+            return false;
+        }
+
         public int RetornaTitulo(string numeroBanco, string linha)
         {
             if (numeroBanco == "237")
-                return Convert.ToInt32(linha.Substring(150, 15).Split('|')[0].Trim());
+                return Convert.ToInt32(linha.Substring(150, 15).Split('A')[0].Trim());
 
             return 0;
         }
@@ -94,7 +108,7 @@ namespace CnabContasPagar.Retornos
         public int RetornaParcela(string numeroBanco, string linha)
         {
             if (numeroBanco == "237")
-                return Convert.ToInt32(linha.Substring(150, 15).Split('|')[1].Trim());
+                return Convert.ToInt32(linha.Substring(150, 15).Split('A')[1].Trim());
 
             return 0;
         }
@@ -102,7 +116,7 @@ namespace CnabContasPagar.Retornos
         public int RetornaIdBanco(string numeroBanco, string linha)
         {
             if (numeroBanco == "237")
-                return Convert.ToInt32(linha.Substring(150, 15).Split('|')[2].Trim());
+                return Convert.ToInt32(linha.Substring(150, 15).Split('A')[2].Trim());
 
             return 0;
         }
@@ -119,6 +133,13 @@ namespace CnabContasPagar.Retornos
         {
             if (numeroBanco == "237")
                 return (Convert.ToDecimal(linha.Substring(219, 15)) / 100);
+
+            return 0;
+        }
+        public decimal RetornaValorTitulo(string numeroBanco, string linha)
+        {
+            if (numeroBanco == "237")
+                return (Convert.ToDecimal(linha.Substring(194, 10)) / 100);
 
             return 0;
         }

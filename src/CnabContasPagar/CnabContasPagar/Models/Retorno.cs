@@ -21,6 +21,7 @@ namespace CnabContasPagar.Models
         public int Parcela { get; set; }
         public int IdBanco { get; set; }
         public decimal Valor { get; set; }
+        public decimal ValorTitulo { get; set; }
         public decimal ValorDesconto { get; set; }
         public decimal ValorAcrescimo { get; set; }
         public DateTime DataPrevista { get; set; }
