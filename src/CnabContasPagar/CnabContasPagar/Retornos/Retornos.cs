@@ -145,7 +145,7 @@ namespace CnabContasPagar.Retornos
         public string RetornaValorErro(string numeroBanco, string linha)
         {
             if (numeroBanco == "237")
-                return linha.Substring(279, 10);
+                return linha.Substring(278, 10);
 
             return "";
         }
