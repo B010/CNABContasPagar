@@ -26,7 +26,6 @@ namespace CnabContasPagar.Bancos
             codigoLote = 0;
             codigoDetalhe = 0;
             qtdeLinhasArquivo = 0;
-            qtdeLinhasLote = 0;
 
             var b = new StringBuilder();
 
@@ -34,6 +33,8 @@ namespace CnabContasPagar.Bancos
 
             foreach (var liq in liquidacoes)
             {
+                qtdeLinhasLote = 0;
+
                 DetalhePagamentoComum(b, liq);
             }
 
