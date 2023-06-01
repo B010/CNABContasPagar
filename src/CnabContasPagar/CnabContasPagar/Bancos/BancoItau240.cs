@@ -24,9 +24,7 @@ namespace CnabContasPagar.Bancos
         public string MontarArquivo(List<Liquidacao> liquidacoes)
         {
             codigoLote = 0;
-            codigoDetalhe = 0;
             qtdeLinhasArquivo = 0;
-            qtdeLinhasLote = 0;
 
             var b = new StringBuilder();
 
@@ -97,7 +95,7 @@ namespace CnabContasPagar.Bancos
         public void HeaderDetalheComum(StringBuilder b, Liquidacao liquidacao)
         {
             ++qtdeLinhasArquivo; //NAO APAGAR
-            ++qtdeLinhasLote; //NAO APAGAR
+            qtdeLinhasLote = 1; //NAO APAGAR
 
             b.Append("341"); //01-03
             b.AppendNumero(4, ++codigoLote); //04-07
@@ -143,6 +141,7 @@ namespace CnabContasPagar.Bancos
         {
             ++qtdeLinhasArquivo; //NAO APAGAR
             ++qtdeLinhasLote; //NAO APAGAR
+            codigoDetalhe = 0;
 
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07
@@ -296,7 +295,7 @@ namespace CnabContasPagar.Bancos
         public void HeaderBoleto(StringBuilder b, Liquidacao liquidacao)
         {
             ++qtdeLinhasArquivo; //NAO APAGAR
-            ++qtdeLinhasLote; //NAO APAGAR
+            qtdeLinhasLote = 1; //NAO APAGAR
 
             b.Append("341"); //01-03
             b.AppendNumero(4, ++codigoLote); //04-07
@@ -332,6 +331,7 @@ namespace CnabContasPagar.Bancos
         {
             ++qtdeLinhasArquivo; //NAO APAGAR
             ++qtdeLinhasLote; //NAO APAGAR
+            codigoDetalhe = 0;
 
             b.Append("341"); //01-03
             b.AppendNumero(4, codigoLote); //04-07

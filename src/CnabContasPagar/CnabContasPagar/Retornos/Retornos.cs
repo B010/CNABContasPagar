@@ -10,7 +10,6 @@ namespace CnabContasPagar.Retornos
 {
     public class Retornos : IRetorno
     {
-
         public Retorno LerArquivo(Stream arquivo)
         {
             var retorno = new Retorno();
@@ -55,7 +54,6 @@ namespace CnabContasPagar.Retornos
                 {
                     if (PodeProsseguir(retorno.CodigoBanco, S))
                     {
-
                         retorno.Itens.Add(new ItemRetorno
                         {
                             NumeroLinha = RetornaLinha(retorno.CodigoBanco, S),
@@ -73,12 +71,10 @@ namespace CnabContasPagar.Retornos
                             Erro = RetornaValorErro(retorno.CodigoBanco, S)
                         });
                     }
-
                 }
             }
 
             return retorno;
-
         }
 
         public int RetornaLinha(string numeroBanco, string linha)
@@ -137,6 +133,7 @@ namespace CnabContasPagar.Retornos
 
             return 0;
         }
+
         public decimal RetornaValorTitulo(string numeroBanco, string linha)
         {
             if (numeroBanco == "237")
@@ -148,7 +145,7 @@ namespace CnabContasPagar.Retornos
         public string RetornaValorErro(string numeroBanco, string linha)
         {
             if (numeroBanco == "237")
-                return linha.Substring(279, 10);
+                return linha.Substring(278, 10);
 
             return "";
         }
@@ -208,7 +205,6 @@ namespace CnabContasPagar.Retornos
             return "";
         }
 
-
         public string RetornaTextoSituacao(string numeroBanco, int situacaoHeader, int situacaoLinha)
         {
             if (numeroBanco == "237")
@@ -258,5 +254,4 @@ namespace CnabContasPagar.Retornos
             return "";
         }
     }
-
 }
