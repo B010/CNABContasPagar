@@ -94,7 +94,7 @@ namespace CnabContasPagar.Bancos
             }
             else
             {
-                b.AppendTexto(16, (liquidacao.ContadorRegistros).ToString()); //120-135 Numero do Pagamento -SÓ PODE REUTILIZAR O MSM NUMERO APÓS 45 DIAS
+                b.AppendTexto(16, (liquidacao.IdContasPagar).ToString()); //120-135 Numero do Pagamento -SÓ PODE REUTILIZAR O MSM NUMERO APÓS 45 DIAS
             }
 
             if (liquidacao.FormaPagamento == "31")

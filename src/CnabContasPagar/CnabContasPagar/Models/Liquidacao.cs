@@ -31,6 +31,7 @@ namespace CnabContasPagar.Models
         public string CepFavorecido { get; set; }
         public string EstadoFavorecido { get; set; }
 
+        public int IdContasPagar { get; set; }
         public int ContadorRegistros { get; set; }
     }
 }

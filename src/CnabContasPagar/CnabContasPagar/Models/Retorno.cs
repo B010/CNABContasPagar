@@ -29,5 +29,6 @@ namespace CnabContasPagar.Models
         public int Situacao { get; set; }
         public string TextoSituacao { get; set; }
         public string Erro { get; set; }
+        public string TextoErro { get; set; }
     }
 }
