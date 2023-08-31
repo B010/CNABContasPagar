@@ -85,7 +85,8 @@ namespace CnabContasPagar.Bancos
             b.AppendTexto(40, liquidacao.EnderecoFavorecido.ToUpper()); //48-87
             b.AppendNumero(8, liquidacao.CepFavorecido); //88-95
             b.AppendNumero(3, CodBanco(liquidacao)); //96-98
-            b.AppendNumero(6, Agencia(liquidacao)); //99-104
+            b.AppendNumero(5, Agencia(liquidacao)); //99-103
+            b.AppendTexto(1, DAgencia(liquidacao)); //104-104
             b.AppendNumero(15, Conta(liquidacao)); //105-119
 
             if (liquidacao.FormaPagamento == "30") // Modalidade DDA
@@ -267,28 +268,49 @@ namespace CnabContasPagar.Bancos
                     if (liquidacao.CodigoBarras.Length == 44)
                     {
                         a = liquidacao.CodigoBarras.Substring(10, 4);
-                        da = CalculaDvAgenciaConta(a);
-
-                        d = a + da;
                     }
                     if (liquidacao.CodigoBarras.Length == 47)
                     {
                         a = liquidacao.CodigoBarras.Substring(4, 4);
-                        da = CalculaDvAgenciaConta(a);
-
-                        d = a + da;
                     }
                 }
             }
             else
             {
                 a = liquidacao.AgenciaFavorecido;
-                da = liquidacao.DigitoAgenciaFavorecido;
-
-                d = a + da;
             }
 
-            return d;
+            return a;
+        }
+
+        private string DAgencia(Liquidacao liquidacao)
+        {
+            string d = "0", a = "", da = "", banco = "";
+
+            if (liquidacao.CodigoBarras != "")
+            {
+                banco = liquidacao.CodigoBarras.Substring(0, 3);
+
+                if (banco == "237")
+                {
+                    if (liquidacao.CodigoBarras.Length == 44)
+                    {
+                        a = liquidacao.CodigoBarras.Substring(10, 4);
+                        da = CalculaDvAgenciaConta(a);
+                    }
+                    if (liquidacao.CodigoBarras.Length == 47)
+                    {
+                        a = liquidacao.CodigoBarras.Substring(4, 4);
+                        da = CalculaDvAgenciaConta(a);
+                    }
+                }
+            }
+            else
+            {
+                da = liquidacao.DigitoAgenciaFavorecido;
+            }
+
+            return da;
         }
 
         private string Conta(Liquidacao liquidacao)
